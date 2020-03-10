@@ -1,39 +1,37 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
-
-	"../attribute"
 )
 
 // Circle represents a Circle SVG element
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle
 type Circle struct {
 	XMLName       xml.Name
-	CX            attribute.Length   `xml:"cx,attr,omitempty"`
-	CY            attribute.Length   `xml:"cy,attr,omitempty"`
-	R             attribute.Length   `xml:"r,attr,omitempty"`
-	Stroke        *attribute.Color   `xml:"stroke,attr,omitempty"`
-	StrokeWidth   *uint8             `xml:"stroke-width,attr,omitempty"`
-	StrokeOpacity *attribute.Opacity `xml:"stroke-opacity,attr,omitempty"`
-	Fill          *attribute.Color   `xml:"fill,attr,omitempty"`
-	FillOpacity   *attribute.Opacity `xml:"fill-opacity,attr,omitempty"`
-	Opacity       float64            `xml:"opacity,attr,omitempty"`
+	CX            Length   `xml:"cx,attr,omitempty"`
+	CY            Length   `xml:"cy,attr,omitempty"`
+	R             Length   `xml:"r,attr,omitempty"`
+	Stroke        *Color   `xml:"stroke,attr,omitempty"`
+	StrokeWidth   *uint8   `xml:"stroke-width,attr,omitempty"`
+	StrokeOpacity *Opacity `xml:"stroke-opacity,attr,omitempty"`
+	Fill          *Color   `xml:"fill,attr,omitempty"`
+	FillOpacity   *Opacity `xml:"fill-opacity,attr,omitempty"`
+	Opacity       float64  `xml:"opacity,attr,omitempty"`
 	Children      []interface{}
 }
 
 // C constructs new Circle element (shortcut)
 func C(cx, cy, r float64, children ...interface{}) Circle {
 	return NewCircle(
-		attribute.Length{Number: cx},
-		attribute.Length{Number: cy},
-		attribute.Length{Number: r},
+		Length{Number: cx},
+		Length{Number: cy},
+		Length{Number: r},
 		children...,
 	)
 }
 
 // NewCircle constructs new Circle element
-func NewCircle(cx, cy, r attribute.Length, children ...interface{}) Circle {
+func NewCircle(cx, cy, r Length, children ...interface{}) Circle {
 	c := Circle{
 		XMLName: xml.Name{Local: "circle"},
 		CX:      cx,
@@ -61,7 +59,7 @@ func (c Circle) UnsetStrokeWidth() Circle {
 }
 
 // SetStroke sets the stroke color of a Circle
-func (c Circle) SetStroke(stroke attribute.Color) Circle {
+func (c Circle) SetStroke(stroke Color) Circle {
 	c.Stroke = &stroke
 
 	return c
@@ -75,7 +73,7 @@ func (c Circle) UnsetStroke() Circle {
 }
 
 // SetStrokeOpacity sets the stroke opacity of a Circle
-func (c Circle) SetStrokeOpacity(so attribute.Opacity) Circle {
+func (c Circle) SetStrokeOpacity(so Opacity) Circle {
 	c.StrokeOpacity = &so
 
 	return c
@@ -89,7 +87,7 @@ func (c Circle) UnsetStrokeOpacity() Circle {
 }
 
 // SetStroke sets the fill color of a Circle
-func (c Circle) SetFill(fill attribute.Color) Circle {
+func (c Circle) SetFill(fill Color) Circle {
 	c.Fill = &fill
 
 	return c
@@ -103,7 +101,7 @@ func (c Circle) UnsetFill() Circle {
 }
 
 // SetStrokeOpacity sets the fill opacity of a Circle
-func (c Circle) SetFillOpacity(fo attribute.Opacity) Circle {
+func (c Circle) SetFillOpacity(fo Opacity) Circle {
 	c.FillOpacity = &fo
 
 	return c

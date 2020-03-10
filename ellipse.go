@@ -1,41 +1,39 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
-
-	"../attribute"
 )
 
 // Ellipse represents a Ellipse SVG element
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/ellipse
 type Ellipse struct {
 	XMLName       xml.Name
-	CX            attribute.Length   `xml:"cx,attr,omitempty"`
-	CY            attribute.Length   `xml:"cy,attr,omitempty"`
-	RX            attribute.Length   `xml:"rx,attr,omitempty"`
-	RY            attribute.Length   `xml:"ry,attr,omitempty"`
-	Stroke        *attribute.Color   `xml:"stroke,attr,omitempty"`
-	StrokeWidth   *uint8             `xml:"stroke-width,attr,omitempty"`
-	StrokeOpacity *attribute.Opacity `xml:"stroke-opacity,attr,omitempty"`
-	Fill          *attribute.Color   `xml:"fill,attr,omitempty"`
-	FillOpacity   *attribute.Opacity `xml:"fill-opacity,attr,omitempty"`
-	Opacity       float64            `xml:"opacity,attr,omitempty"`
+	CX            Length   `xml:"cx,attr,omitempty"`
+	CY            Length   `xml:"cy,attr,omitempty"`
+	RX            Length   `xml:"rx,attr,omitempty"`
+	RY            Length   `xml:"ry,attr,omitempty"`
+	Stroke        *Color   `xml:"stroke,attr,omitempty"`
+	StrokeWidth   *uint8   `xml:"stroke-width,attr,omitempty"`
+	StrokeOpacity *Opacity `xml:"stroke-opacity,attr,omitempty"`
+	Fill          *Color   `xml:"fill,attr,omitempty"`
+	FillOpacity   *Opacity `xml:"fill-opacity,attr,omitempty"`
+	Opacity       float64  `xml:"opacity,attr,omitempty"`
 	Children      []interface{}
 }
 
 // E constructs new Ellipse element (shortcut)
 func E(cx, cy, rx, ry float64, children ...interface{}) Ellipse {
 	return NewEllipse(
-		attribute.Length{Number: cx},
-		attribute.Length{Number: cy},
-		attribute.Length{Number: rx},
-		attribute.Length{Number: ry},
+		Length{Number: cx},
+		Length{Number: cy},
+		Length{Number: rx},
+		Length{Number: ry},
 		children...,
 	)
 }
 
 // NewEllipse constructs new Ellipse element
-func NewEllipse(cx, cy, rx, ry attribute.Length, children ...interface{}) Ellipse {
+func NewEllipse(cx, cy, rx, ry Length, children ...interface{}) Ellipse {
 	c := Ellipse{
 		XMLName: xml.Name{Local: "ellipse"},
 		CX:      cx,
@@ -64,7 +62,7 @@ func (e Ellipse) UnsetStrokeWidth() Ellipse {
 }
 
 // SetStroke sets the stroke color of a Ellipse
-func (e Ellipse) SetStroke(stroke attribute.Color) Ellipse {
+func (e Ellipse) SetStroke(stroke Color) Ellipse {
 	e.Stroke = &stroke
 
 	return e
@@ -78,7 +76,7 @@ func (e Ellipse) UnsetStroke() Ellipse {
 }
 
 // SetStrokeOpacity sets the stroke opacity of a Ellipse
-func (e Ellipse) SetStrokeOpacity(so attribute.Opacity) Ellipse {
+func (e Ellipse) SetStrokeOpacity(so Opacity) Ellipse {
 	e.StrokeOpacity = &so
 
 	return e
@@ -92,7 +90,7 @@ func (e Ellipse) UnsetStrokeOpacity() Ellipse {
 }
 
 // SetStroke sets the fill color of a Ellipse
-func (e Ellipse) SetFill(fill attribute.Color) Ellipse {
+func (e Ellipse) SetFill(fill Color) Ellipse {
 	e.Fill = &fill
 
 	return e
@@ -106,7 +104,7 @@ func (e Ellipse) UnsetFill() Ellipse {
 }
 
 // SetStrokeOpacity sets the fill opacity of a Ellipse
-func (e Ellipse) SetFillOpacity(fo attribute.Opacity) Ellipse {
+func (e Ellipse) SetFillOpacity(fo Opacity) Ellipse {
 	e.FillOpacity = &fo
 
 	return e

@@ -1,4 +1,4 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
@@ -6,8 +6,6 @@ import (
 	"reflect"
 	"strings"
 	"testing"
-
-	"../attribute"
 )
 
 func TestNewSVG(t *testing.T) {
@@ -37,8 +35,8 @@ func TestNewSVG(t *testing.T) {
 }
 
 func TestSVG_MarshalText(t *testing.T) {
-	red := attribute.Color{color.RGBA{255, 0, 0, 255}}
-	navy := attribute.Color{color.RGBA{0, 0, 128, 255}}
+	red := Color{color.RGBA{255, 0, 0, 255}}
+	navy := Color{color.RGBA{0, 0, 128, 255}}
 
 	tests := []struct {
 		name      string
@@ -61,8 +59,8 @@ func TestSVG_MarshalText(t *testing.T) {
 				L(170, 30, 170, 70).SetStroke(red).SetStrokeWidth(2),
 				L(170, 70, 30, 70).SetStroke(navy).SetStrokeWidth(2),
 				L(30, 70, 30, 30).SetStroke(red).SetStrokeWidth(2),
-				T(30, 40, TS("foo")).SetTextAnchor(attribute.Middle).SetFill(red),
-				T(30, 40, TS("bar")).SetTextAnchor(attribute.Start).SetFill(navy),
+				T(30, 40, TS("foo")).SetTextAnchor(Middle).SetFill(red),
+				T(30, 40, TS("bar")).SetTextAnchor(Start).SetFill(navy),
 			),
 			[]string{
 				`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100" version="1.1">`,

@@ -1,20 +1,18 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
 	"reflect"
 	"strings"
 	"testing"
-
-	"../attribute"
 )
 
 func TestNewLine(t *testing.T) {
 	type args struct {
-		x1       attribute.Length
-		y1       attribute.Length
-		x2       attribute.Length
-		y2       attribute.Length
+		x1       Length
+		y1       Length
+		x2       Length
+		y2       Length
 		children []interface{}
 	}
 	tests := []struct {
@@ -24,8 +22,8 @@ func TestNewLine(t *testing.T) {
 	}{
 		{
 			"simple line",
-			args{x1: attribute.Length{Number: 1}, y1: attribute.Length{Number: 2}, x2: attribute.Length{Number: -4.2}, y2: attribute.Length{Number: 4, Type: attribute.Em}},
-			Line{XMLName: xml.Name{Local: "line"}, X1: attribute.Length{Number: 1}, Y1: attribute.Length{Number: 2}, X2: attribute.Length{Number: -4.2}, Y2: attribute.Length{Number: 4, Type: attribute.Em}},
+			args{x1: Length{Number: 1}, y1: Length{Number: 2}, x2: Length{Number: -4.2}, y2: Length{Number: 4, Type: Em}},
+			Line{XMLName: xml.Name{Local: "line"}, X1: Length{Number: 1}, Y1: Length{Number: 2}, X2: Length{Number: -4.2}, Y2: Length{Number: 4, Type: Em}},
 		},
 	}
 	for _, tt := range tests {

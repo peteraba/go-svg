@@ -1,33 +1,31 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
-
-	"../attribute"
 )
 
 // Text represents a Text SVG element
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text
 type Text struct {
 	XMLName    xml.Name
-	X          attribute.Length      `xml:"x,attr,omitempty"`
-	Y          attribute.Length      `xml:"y,attr,omitempty"`
-	TextAnchor *attribute.TextAnchor `xml:"text-anchor,attr,omitempty"`
-	Fill       *attribute.Color      `xml:"stroke,attr,omitempty"`
+	X          Length      `xml:"x,attr,omitempty"`
+	Y          Length      `xml:"y,attr,omitempty"`
+	TextAnchor *TextAnchor `xml:"text-anchor,attr,omitempty"`
+	Fill       *Color      `xml:"stroke,attr,omitempty"`
 	Children   []interface{}
 }
 
 // T constructs new Text element (shortcut)
 func T(x, y float64, children ...interface{}) Text {
 	return NewText(
-		attribute.Length{Number: x},
-		attribute.Length{Number: y},
+		Length{Number: x},
+		Length{Number: y},
 		children...,
 	)
 }
 
 // NewText constructs new Text element
-func NewText(x, y attribute.Length, children ...interface{}) Text {
+func NewText(x, y Length, children ...interface{}) Text {
 	t := Text{
 		XMLName: xml.Name{Local: "text"},
 		X:       x,
@@ -40,7 +38,7 @@ func NewText(x, y attribute.Length, children ...interface{}) Text {
 }
 
 // SetFill sets the fill color of a Text
-func (t Text) SetFill(fill attribute.Color) Text {
+func (t Text) SetFill(fill Color) Text {
 	t.Fill = &fill
 
 	return t
@@ -54,7 +52,7 @@ func (t Text) UnsetFill() Text {
 }
 
 // SetTextAnchor sets the text anchor of a Text
-func (t Text) SetTextAnchor(ta attribute.TextAnchor) Text {
+func (t Text) SetTextAnchor(ta TextAnchor) Text {
 	t.TextAnchor = &ta
 
 	return t

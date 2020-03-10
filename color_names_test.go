@@ -1,4 +1,4 @@
-package attribute
+package svg
 
 import (
 	"image/color"
@@ -45,9 +45,9 @@ func TestNewColorName(t *testing.T) {
 
 func TestColorName_ToColor(t *testing.T) {
 	tests := []struct {
-		name    string
-		cn      ColorName
-		want    Color
+		name string
+		cn   ColorName
+		want Color
 	}{
 		{
 			"silver",
@@ -64,7 +64,7 @@ func TestColorName_ToColor(t *testing.T) {
 		})
 	}
 
-	t.Run("panic on invalid color name", func(t *testing.T){
+	t.Run("panic on invalid color name", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
 				t.Errorf("The code did not panic")
@@ -79,9 +79,9 @@ func TestColorName_ToColor(t *testing.T) {
 
 func TestColorName_ToHexa(t *testing.T) {
 	tests := []struct {
-		name    string
-		cn      ColorName
-		want    string
+		name string
+		cn   ColorName
+		want string
 	}{
 		{
 			"silver",
@@ -98,7 +98,7 @@ func TestColorName_ToHexa(t *testing.T) {
 		})
 	}
 
-	t.Run("panic on invalid color name", func(t *testing.T){
+	t.Run("panic on invalid color name", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
 				t.Errorf("The code did not panic")

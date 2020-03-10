@@ -1,4 +1,4 @@
-package element
+package svg
 
 import "encoding/xml"
 

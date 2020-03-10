@@ -1,45 +1,43 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
-
-	"../attribute"
 )
 
 // Rect represents a Rect SVG element
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/rect
 type Rect struct {
 	XMLName       xml.Name
-	X             attribute.Length   `xml:"x,attr,omitempty"`
-	Y             attribute.Length   `xml:"y,attr,omitempty"`
-	Width         attribute.Length   `xml:"width,attr,omitempty"`
-	Height        attribute.Length   `xml:"height,attr,omitempty"`
-	RX            attribute.Length   `xml:"rx,attr,omitempty"`
-	RY            attribute.Length   `xml:"ry,attr,omitempty"`
-	Stroke        *attribute.Color   `xml:"stroke,attr,omitempty"`
-	StrokeWidth   *uint8             `xml:"stroke-width,attr,omitempty"`
-	StrokeOpacity *attribute.Opacity `xml:"stroke-opacity,attr,omitempty"`
-	Fill          *attribute.Color   `xml:"fill,attr,omitempty"`
-	FillOpacity   *attribute.Opacity `xml:"fill-opacity,attr,omitempty"`
-	Opacity       float64            `xml:"opacity,attr,omitempty"`
+	X             Length   `xml:"x,attr,omitempty"`
+	Y             Length   `xml:"y,attr,omitempty"`
+	Width         Length   `xml:"width,attr,omitempty"`
+	Height        Length   `xml:"height,attr,omitempty"`
+	RX            Length   `xml:"rx,attr,omitempty"`
+	RY            Length   `xml:"ry,attr,omitempty"`
+	Stroke        *Color   `xml:"stroke,attr,omitempty"`
+	StrokeWidth   *uint8   `xml:"stroke-width,attr,omitempty"`
+	StrokeOpacity *Opacity `xml:"stroke-opacity,attr,omitempty"`
+	Fill          *Color   `xml:"fill,attr,omitempty"`
+	FillOpacity   *Opacity `xml:"fill-opacity,attr,omitempty"`
+	Opacity       float64  `xml:"opacity,attr,omitempty"`
 	Children      []interface{}
 }
 
 // R constructs new Rect element (shortcut)
 func R(x, y, width, height float64, children ...interface{}) Rect {
 	return NewRect(
-		attribute.Length{Number: x},
-		attribute.Length{Number: y},
-		attribute.Length{Number: width},
-		attribute.Length{Number: height},
-		attribute.Length{},
-		attribute.Length{},
+		Length{Number: x},
+		Length{Number: y},
+		Length{Number: width},
+		Length{Number: height},
+		Length{},
+		Length{},
 		children...,
 	)
 }
 
 // NewRect constructs new Rect element
-func NewRect(x, y, width, height, rx, ry attribute.Length, children ...interface{}) Rect {
+func NewRect(x, y, width, height, rx, ry Length, children ...interface{}) Rect {
 	c := Rect{
 		XMLName: xml.Name{Local: "rect"},
 		X:       x,
@@ -70,7 +68,7 @@ func (r Rect) UnsetStrokeWidth() Rect {
 }
 
 // SetStroke sets the stroke color of a Rect
-func (r Rect) SetStroke(stroke attribute.Color) Rect {
+func (r Rect) SetStroke(stroke Color) Rect {
 	r.Stroke = &stroke
 
 	return r
@@ -84,7 +82,7 @@ func (r Rect) UnsetStroke() Rect {
 }
 
 // SetStrokeOpacity sets the stroke opacity of a Rect
-func (r Rect) SetStrokeOpacity(so attribute.Opacity) Rect {
+func (r Rect) SetStrokeOpacity(so Opacity) Rect {
 	r.StrokeOpacity = &so
 
 	return r
@@ -98,7 +96,7 @@ func (r Rect) UnsetStrokeOpacity() Rect {
 }
 
 // SetStroke sets the fill color of a Rect
-func (r Rect) SetFill(fill attribute.Color) Rect {
+func (r Rect) SetFill(fill Color) Rect {
 	r.Fill = &fill
 
 	return r
@@ -112,7 +110,7 @@ func (r Rect) UnsetFill() Rect {
 }
 
 // SetStrokeOpacity sets the fill opacity of a Rect
-func (r Rect) SetFillOpacity(fo attribute.Opacity) Rect {
+func (r Rect) SetFillOpacity(fo Opacity) Rect {
 	r.FillOpacity = &fo
 
 	return r

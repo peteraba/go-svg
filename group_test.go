@@ -1,4 +1,4 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
@@ -7,42 +7,41 @@ import (
 	"testing"
 )
 
-func TestNewDesc(t *testing.T) {
+func TestNewGroup(t *testing.T) {
 	type args struct {
-		text     string
 		children []interface{}
 	}
 	tests := []struct {
 		name string
 		args args
-		want Desc
+		want Group
 	}{
 		{
-			"simple desc",
-			args{"Foo", nil},
-			Desc{XMLName: xml.Name{Local: "desc"}, Text: "Foo"},
+			"simple group",
+			args{},
+			Group{XMLName: xml.Name{Local: "g"}},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewDesc(tt.args.text, tt.args.children...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewDesc() = %v, want %v", got, tt.want)
+			if got := NewGroup(tt.args.children...); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewGroup() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestDesc_MarshalText(t *testing.T) {
+func TestGroup_MarshalText(t *testing.T) {
 	tests := []struct {
 		name      string
-		tspan     Desc
+		tspan     Group
 		wantLines []string
 		wantErr   bool
 	}{
 		{
-			"simple desc",
-			NewDesc("foo"),
-			[]string{`<desc>foo</desc>`},
+			"simple group",
+			NewGroup(),
+			[]string{`<g></g>`},
 			false,
 		},
 	}

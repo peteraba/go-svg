@@ -1,4 +1,4 @@
-package attribute
+package svg
 
 import (
 	"reflect"
@@ -90,7 +90,7 @@ func TestLengthType_UnmarshalText(t *testing.T) {
 	}
 }
 
-func TestL(t *testing.T) {
+func TestLth(t *testing.T) {
 	type args struct {
 		n       float64
 		lengths []LengthType
@@ -113,7 +113,7 @@ func TestL(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := L(tt.args.n, tt.args.lengths...); !reflect.DeepEqual(got, tt.want) {
+			if got := Lth(tt.args.n, tt.args.lengths...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("L() = %v, want %v", got, tt.want)
 			}
 		})

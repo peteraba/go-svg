@@ -1,12 +1,10 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
 	"reflect"
 	"strings"
 	"testing"
-
-	"../attribute"
 )
 
 func TestE(t *testing.T) {
@@ -25,7 +23,7 @@ func TestE(t *testing.T) {
 		{
 			"simple ellipse",
 			args{cx: 1, cy: 2, rx: 4.2, ry: 3.1},
-			Ellipse{XMLName: xml.Name{Local: "ellipse"}, CX: attribute.Length{Number: 1}, CY: attribute.Length{Number: 2}, RX: attribute.Length{Number: 4.2}, RY: attribute.Length{Number: 3.1}},
+			Ellipse{XMLName: xml.Name{Local: "ellipse"}, CX: Length{Number: 1}, CY: Length{Number: 2}, RX: Length{Number: 4.2}, RY: Length{Number: 3.1}},
 		},
 	}
 	for _, tt := range tests {
@@ -39,10 +37,10 @@ func TestE(t *testing.T) {
 
 func TestNewEllipse(t *testing.T) {
 	type args struct {
-		cx       attribute.Length
-		cy       attribute.Length
-		rx       attribute.Length
-		ry       attribute.Length
+		cx       Length
+		cy       Length
+		rx       Length
+		ry       Length
 		children []interface{}
 	}
 	tests := []struct {
@@ -52,8 +50,8 @@ func TestNewEllipse(t *testing.T) {
 	}{
 		{
 			"simple ellipse",
-			args{cx: attribute.Length{Number: 1}, cy: attribute.Length{Number: 2}, rx: attribute.Length{Number: 4.2}, ry: attribute.Length{Number: 3.1}},
-			Ellipse{XMLName: xml.Name{Local: "ellipse"}, CX: attribute.Length{Number: 1}, CY: attribute.Length{Number: 2}, RX: attribute.Length{Number: 4.2}, RY: attribute.Length{Number: 3.1}},
+			args{cx: Length{Number: 1}, cy: Length{Number: 2}, rx: Length{Number: 4.2}, ry: Length{Number: 3.1}},
+			Ellipse{XMLName: xml.Name{Local: "ellipse"}, CX: Length{Number: 1}, CY: Length{Number: 2}, RX: Length{Number: 4.2}, RY: Length{Number: 3.1}},
 		},
 	}
 	for _, tt := range tests {

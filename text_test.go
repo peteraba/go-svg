@@ -1,18 +1,16 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
 	"reflect"
 	"strings"
 	"testing"
-
-	"../attribute"
 )
 
 func TestNewText(t *testing.T) {
 	type args struct {
-		x        attribute.Length
-		y        attribute.Length
+		x        Length
+		y        Length
 		children []interface{}
 	}
 	tests := []struct {
@@ -27,8 +25,8 @@ func TestNewText(t *testing.T) {
 		},
 		{
 			"text width x and y",
-			args{x: attribute.Length{Number: 23.43}, y: attribute.Length{Number: -43, Type: attribute.Em}},
-			Text{XMLName: xml.Name{Local: "text"}, X: attribute.Length{Number: 23.43}, Y: attribute.Length{Number: -43, Type: attribute.Em}},
+			args{x: Length{Number: 23.43}, y: Length{Number: -43, Type: Em}},
+			Text{XMLName: xml.Name{Local: "text"}, X: Length{Number: 23.43}, Y: Length{Number: -43, Type: Em}},
 		},
 	}
 	for _, tt := range tests {
@@ -59,7 +57,7 @@ func TestT(t *testing.T) {
 		{
 			"text width x and y",
 			args{x: 23.45, y: -34},
-			Text{XMLName: xml.Name{Local: "text"}, X: attribute.Length{23.45, ""}, Y: attribute.Length{-34, ""}},
+			Text{XMLName: xml.Name{Local: "text"}, X: Length{23.45, ""}, Y: Length{-34, ""}},
 		},
 	}
 	for _, tt := range tests {
@@ -72,14 +70,14 @@ func TestT(t *testing.T) {
 }
 
 func TestText_UnsetFill(t1 *testing.T) {
-	red, _ := attribute.ColorFromHexaString("#f00")
+	red, _ := ColorFromHexaString("#f00")
 
 	type fields struct {
 		XMLName    xml.Name
-		X          attribute.Length
-		Y          attribute.Length
-		TextAnchor *attribute.TextAnchor
-		Fill       *attribute.Color
+		X          Length
+		Y          Length
+		TextAnchor *TextAnchor
+		Fill       *Color
 		Children   []interface{}
 	}
 	tests := []struct {
@@ -111,13 +109,13 @@ func TestText_UnsetFill(t1 *testing.T) {
 }
 
 func TestText_UnsetTextAnchor(t1 *testing.T) {
-	var middle = attribute.Middle
+	var middle = Middle
 	type fields struct {
 		XMLName    xml.Name
-		X          attribute.Length
-		Y          attribute.Length
-		TextAnchor *attribute.TextAnchor
-		Fill       *attribute.Color
+		X          Length
+		Y          Length
+		TextAnchor *TextAnchor
+		Fill       *Color
 		Children   []interface{}
 	}
 	tests := []struct {

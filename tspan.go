@@ -1,20 +1,18 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
-
-	"../attribute"
 )
 
 // TSpan represents a TSpan SVG element
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/tspan
 type TSpan struct {
 	XMLName  xml.Name
-	X        attribute.Length  `xml:"x,attr,omitempty"`
-	Y        attribute.Length  `xml:"y,attr,omitempty"`
-	DX       *attribute.Length `xml:"dx,attr,omitempty"`
-	DY       *attribute.Length `xml:"dy,attr,omitempty"`
-	Text     string            `xml:",innerxml"`
+	X        Length  `xml:"x,attr,omitempty"`
+	Y        Length  `xml:"y,attr,omitempty"`
+	DX       *Length `xml:"dx,attr,omitempty"`
+	DY       *Length `xml:"dy,attr,omitempty"`
+	Text     string  `xml:",innerxml"`
 	Children []interface{}
 }
 
@@ -36,28 +34,28 @@ func NewTSpan(text string, children ...interface{}) TSpan {
 }
 
 // SetX sets the X attribute of a TSpan
-func (ts TSpan) SetX(x attribute.Length) TSpan {
+func (ts TSpan) SetX(x Length) TSpan {
 	ts.X = x
 
 	return ts
 }
 
 // SetY sets the Y attribute of a TSpan
-func (ts TSpan) SetY(y attribute.Length) TSpan {
+func (ts TSpan) SetY(y Length) TSpan {
 	ts.Y = y
 
 	return ts
 }
 
 // SetDx sets the DX attribute of a TSpan
-func (ts TSpan) SetDx(dx attribute.Length) TSpan {
+func (ts TSpan) SetDx(dx Length) TSpan {
 	ts.DX = &dx
 
 	return ts
 }
 
 // SetDy sets the DY attribute of a TSpan
-func (ts TSpan) SetDy(dy attribute.Length) TSpan {
+func (ts TSpan) SetDy(dy Length) TSpan {
 	ts.DY = &dy
 
 	return ts
@@ -65,28 +63,28 @@ func (ts TSpan) SetDy(dy attribute.Length) TSpan {
 
 // SX sets the X attribute of a TSpan (shortcut)
 func (ts TSpan) SX(x float64) TSpan {
-	ts.X = attribute.Length{Number: x}
+	ts.X = Length{Number: x}
 
 	return ts
 }
 
 // SY sets the Y attribute of a TSpan (shortcut)
 func (ts TSpan) SY(y float64) TSpan {
-	ts.Y = attribute.Length{Number: y}
+	ts.Y = Length{Number: y}
 
 	return ts
 }
 
 // SDx sets the DX attribute of a TSpan (shortcut)
 func (ts TSpan) SDx(dx float64) TSpan {
-	ts.DX = &attribute.Length{Number: dx}
+	ts.DX = &Length{Number: dx}
 
 	return ts
 }
 
 // SDy sets the DY attribute of a TSpan (shortcut)
 func (ts TSpan) SDy(dy float64) TSpan {
-	ts.DY = &attribute.Length{Number: dy}
+	ts.DY = &Length{Number: dy}
 
 	return ts
 }

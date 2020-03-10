@@ -1,4 +1,4 @@
-package attribute
+package svg
 
 import (
 	"fmt"
@@ -85,7 +85,7 @@ type Length struct {
 	Type   LengthType
 }
 
-func L(n float64, lengths ...LengthType) Length {
+func Lth(n float64, lengths ...LengthType) Length {
 	var t LengthType
 	if len(lengths) > 0 {
 		t = lengths[0]

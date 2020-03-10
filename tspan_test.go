@@ -1,4 +1,4 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
@@ -7,41 +7,42 @@ import (
 	"testing"
 )
 
-func TestNewGroup(t *testing.T) {
+func TestNewTSpan(t *testing.T) {
 	type args struct {
+		text     string
 		children []interface{}
 	}
 	tests := []struct {
 		name string
 		args args
-		want Group
+		want TSpan
 	}{
 		{
-			"simple group",
-			args{},
-			Group{XMLName: xml.Name{Local: "g"}},
+			"simple tspan",
+			args{"Foo", nil},
+			TSpan{XMLName: xml.Name{Local: "tspan"}, Text: "Foo"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewGroup(tt.args.children...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewGroup() = %v, want %v", got, tt.want)
+			if got := NewTSpan(tt.args.text, tt.args.children...); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewTSpan() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestGroup_MarshalText(t *testing.T) {
+func TestTSpan_MarshalText(t *testing.T) {
 	tests := []struct {
 		name      string
-		tspan     Group
+		tspan     TSpan
 		wantLines []string
 		wantErr   bool
 	}{
 		{
-			"simple group",
-			NewGroup(),
-			[]string{`<g></g>`},
+			"simple tspan",
+			TS("foo"),
+			[]string{`<tspan x="0" y="0">foo</tspan>`},
 			false,
 		},
 	}

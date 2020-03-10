@@ -1,4 +1,4 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
@@ -7,49 +7,49 @@ import (
 	"testing"
 )
 
-func TestNewA(t *testing.T) {
+func TestNewDesc(t *testing.T) {
 	type args struct {
-		href     string
+		text     string
 		children []interface{}
 	}
 	tests := []struct {
 		name string
 		args args
-		want A
+		want Desc
 	}{
 		{
-			"simple line",
-			args{href: "http://foo.com/"},
-			A{XMLName: xml.Name{Local: "a"}, Href: "http://foo.com/"},
+			"simple desc",
+			args{"Foo", nil},
+			Desc{XMLName: xml.Name{Local: "desc"}, Text: "Foo"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewA(tt.args.href, tt.args.children...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewA() = %v, want %v", got, tt.want)
+			if got := NewDesc(tt.args.text, tt.args.children...); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewDesc() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestA_MarshalText(t *testing.T) {
+func TestDesc_MarshalText(t *testing.T) {
 	tests := []struct {
 		name      string
-		a         A
+		tspan     Desc
 		wantLines []string
 		wantErr   bool
 	}{
 		{
-			"simple a",
-			NewA("http://foo.com/"),
-			[]string{`<a href="http://foo.com/"></a>`},
+			"simple desc",
+			NewDesc("foo"),
+			[]string{`<desc>foo</desc>`},
 			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			want := strings.Join(tt.wantLines, "")
-			gotBytes, err := xml.Marshal(tt.a)
+			gotBytes, err := xml.Marshal(tt.tspan)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("xml.Marshal() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -1,12 +1,10 @@
-package element
+package svg
 
 import (
 	"encoding/xml"
 	"reflect"
 	"strings"
 	"testing"
-
-	"../attribute"
 )
 
 func TestR(t *testing.T) {
@@ -25,7 +23,7 @@ func TestR(t *testing.T) {
 		{
 			"simple rect",
 			args{x: 1, y: 2, width: 4.2, height: 3.1},
-			Rect{XMLName: xml.Name{Local: "rect"}, X: attribute.Length{Number: 1}, Y: attribute.Length{Number: 2}, Width: attribute.Length{Number: 4.2}, Height: attribute.Length{Number: 3.1}},
+			Rect{XMLName: xml.Name{Local: "rect"}, X: Length{Number: 1}, Y: Length{Number: 2}, Width: Length{Number: 4.2}, Height: Length{Number: 3.1}},
 		},
 	}
 	for _, tt := range tests {
@@ -39,12 +37,12 @@ func TestR(t *testing.T) {
 
 func TestNewRect(t *testing.T) {
 	type args struct {
-		x        attribute.Length
-		y        attribute.Length
-		width    attribute.Length
-		height   attribute.Length
-		rx       attribute.Length
-		ry       attribute.Length
+		x        Length
+		y        Length
+		width    Length
+		height   Length
+		rx       Length
+		ry       Length
 		children []interface{}
 	}
 	tests := []struct {
@@ -54,8 +52,8 @@ func TestNewRect(t *testing.T) {
 	}{
 		{
 			"simple rect",
-			args{x: attribute.Length{Number: 1}, y: attribute.Length{Number: 2}, width: attribute.Length{Number: 20}, height: attribute.Length{Number: 10}, rx: attribute.Length{Number: 4.2}, ry: attribute.Length{Number: 3.1}},
-			Rect{XMLName: xml.Name{Local: "rect"}, X: attribute.Length{Number: 1}, Y: attribute.Length{Number: 2}, Width: attribute.Length{Number: 20}, Height: attribute.Length{Number: 10}, RX: attribute.Length{Number: 4.2}, RY: attribute.Length{Number: 3.1}},
+			args{x: Length{Number: 1}, y: Length{Number: 2}, width: Length{Number: 20}, height: Length{Number: 10}, rx: Length{Number: 4.2}, ry: Length{Number: 3.1}},
+			Rect{XMLName: xml.Name{Local: "rect"}, X: Length{Number: 1}, Y: Length{Number: 2}, Width: Length{Number: 20}, Height: Length{Number: 10}, RX: Length{Number: 4.2}, RY: Length{Number: 3.1}},
 		},
 	}
 	for _, tt := range tests {

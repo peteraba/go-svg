@@ -1,4 +1,4 @@
-package attribute
+package svg
 
 import (
 	"strings"
