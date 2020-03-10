@@ -1,4 +1,4 @@
-package svg
+package attribute
 
 import (
 	"errors"
@@ -7,7 +7,35 @@ import (
 	"strings"
 )
 
-func ParseHexaColor(s string) (Color, error) {
+type Color struct {
+	color.RGBA
+}
+
+func (c Color) String() string {
+	return fmt.Sprintf("#%s%s%s", twoDigitHexa(c.R), twoDigitHexa(c.G), twoDigitHexa(c.B))
+}
+
+func (c *Color) UnmarshalText(text []byte) error {
+	t := string(text)
+
+	newColorName, err := NewColorName(t)
+	if err == nil {
+		*c = newColorName.ToColor()
+
+		return nil
+	}
+
+	newColor, err := ColorFromHexaString(t)
+	if err != nil {
+		return err
+	}
+
+	*c = newColor
+
+	return nil
+}
+
+func ColorFromHexaString(s string) (Color, error) {
 	if len(s) != 4 && len(s) != 7 {
 		return Color{}, errors.New("invalid hexa color length")
 	}
@@ -22,6 +50,16 @@ func ParseHexaColor(s string) (Color, error) {
 	}
 
 	return Color{RGBA: color.RGBA{R: us[0], G: us[1], B: us[2], A: 255}}, nil
+}
+
+func (c *Color) MarshalText() ([]byte, error) {
+	if c == nil {
+		return []byte{}, nil
+	}
+
+	s := fmt.Sprintf("#%s%s%s", twoDigitHexa(c.R), twoDigitHexa(c.G), twoDigitHexa(c.B))
+
+	return []byte(s), nil
 }
 
 func charsToUint8(s string) ([3]uint8, error) {

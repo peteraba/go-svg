@@ -1,4 +1,4 @@
-package svg
+package attribute
 
 import (
 	"image/color"
