@@ -8,8 +8,8 @@ import (
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text
 type Text struct {
 	XMLName    xml.Name
-	X          Length      `xml:"x,attr,omitempty"`
-	Y          Length      `xml:"y,attr,omitempty"`
+	X          *Length     `xml:"x,attr,omitempty"`
+	Y          *Length     `xml:"y,attr,omitempty"`
 	TextAnchor *TextAnchor `xml:"text-anchor,attr,omitempty"`
 	Fill       *Color      `xml:"stroke,attr,omitempty"`
 	Children   []interface{}
@@ -17,15 +17,28 @@ type Text struct {
 
 // T constructs new Text element (shortcut)
 func T(x, y float64, children ...interface{}) Text {
+	var (
+		pX *Length
+		pY *Length
+	)
+
+	if x != 0.0 {
+		pX = &Length{Number: x}
+	}
+
+	if y != 0.0 {
+		pY = &Length{Number: y}
+	}
+
 	return NewText(
-		Length{Number: x},
-		Length{Number: y},
+		pX,
+		pY,
 		children...,
 	)
 }
 
 // NewText constructs new Text element
-func NewText(x, y Length, children ...interface{}) Text {
+func NewText(x, y *Length, children ...interface{}) Text {
 	t := Text{
 		XMLName: xml.Name{Local: "text"},
 		X:       x,

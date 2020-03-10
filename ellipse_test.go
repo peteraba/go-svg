@@ -23,7 +23,7 @@ func TestE(t *testing.T) {
 		{
 			"simple ellipse",
 			args{cx: 1, cy: 2, rx: 4.2, ry: 3.1},
-			Ellipse{XMLName: xml.Name{Local: "ellipse"}, CX: Length{Number: 1}, CY: Length{Number: 2}, RX: Length{Number: 4.2}, RY: Length{Number: 3.1}},
+			Ellipse{XMLName: xml.Name{Local: "ellipse"}, CX: &Length{Number: 1}, CY: &Length{Number: 2}, RX: &Length{Number: 4.2}, RY: &Length{Number: 3.1}},
 		},
 	}
 	for _, tt := range tests {
@@ -37,10 +37,10 @@ func TestE(t *testing.T) {
 
 func TestNewEllipse(t *testing.T) {
 	type args struct {
-		cx       Length
-		cy       Length
-		rx       Length
-		ry       Length
+		cx       *Length
+		cy       *Length
+		rx       *Length
+		ry       *Length
 		children []interface{}
 	}
 	tests := []struct {
@@ -50,8 +50,8 @@ func TestNewEllipse(t *testing.T) {
 	}{
 		{
 			"simple ellipse",
-			args{cx: Length{Number: 1}, cy: Length{Number: 2}, rx: Length{Number: 4.2}, ry: Length{Number: 3.1}},
-			Ellipse{XMLName: xml.Name{Local: "ellipse"}, CX: Length{Number: 1}, CY: Length{Number: 2}, RX: Length{Number: 4.2}, RY: Length{Number: 3.1}},
+			args{cx: &Length{Number: 1}, cy: &Length{Number: 2}, rx: &Length{Number: 4.2}, ry: &Length{Number: 3.1}},
+			Ellipse{XMLName: xml.Name{Local: "ellipse"}, CX: &Length{Number: 1}, CY: &Length{Number: 2}, RX: &Length{Number: 4.2}, RY: &Length{Number: 3.1}},
 		},
 	}
 	for _, tt := range tests {
@@ -73,7 +73,7 @@ func TestEllipse_MarshalText(t *testing.T) {
 		{
 			"simple ellipse",
 			E(0, 100, 50, 20),
-			[]string{`<ellipse cx="0" cy="100" rx="50" ry="20"></ellipse>`},
+			[]string{`<ellipse cy="100" rx="50" ry="20"></ellipse>`},
 			false,
 		},
 	}

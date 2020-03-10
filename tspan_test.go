@@ -42,7 +42,7 @@ func TestTSpan_MarshalText(t *testing.T) {
 		{
 			"simple tspan",
 			TS("foo"),
-			[]string{`<tspan x="0" y="0">foo</tspan>`},
+			[]string{`<tspan>foo</tspan>`},
 			false,
 		},
 	}

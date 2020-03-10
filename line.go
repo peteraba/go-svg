@@ -8,10 +8,10 @@ import (
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/line
 type Line struct {
 	XMLName       xml.Name
-	X1            Length   `xml:"x1,attr,omitempty"`
-	Y1            Length   `xml:"y1,attr,omitempty"`
-	X2            Length   `xml:"x2,attr,omitempty"`
-	Y2            Length   `xml:"y2,attr,omitempty"`
+	X1            *Length  `xml:"x1,attr,omitempty"`
+	Y1            *Length  `xml:"y1,attr,omitempty"`
+	X2            *Length  `xml:"x2,attr,omitempty"`
+	Y2            *Length  `xml:"y2,attr,omitempty"`
 	StrokeWidth   *uint8   `xml:"stroke-width,attr,omitempty"`
 	Stroke        *Color   `xml:"stroke,attr,omitempty"`
 	StrokeOpacity *Opacity `xml:"stroke-opacity,attr,omitempty"`
@@ -23,17 +23,37 @@ type Line struct {
 
 // L constructs new Line element (shortcut)
 func L(x1, y1, x2, y2 float64, children ...interface{}) Line {
+	var (
+		pX1, pY1, pX2, pY2 *Length
+	)
+
+	if x1 != 0.0 {
+		pX1 = &Length{Number: x1}
+	}
+
+	if y1 != 0.0 {
+		pY1 = &Length{Number: y1}
+	}
+
+	if x2 != 0.0 {
+		pX2 = &Length{Number: x2}
+	}
+
+	if y2 != 0.0 {
+		pY2 = &Length{Number: y2}
+	}
+
 	return NewLine(
-		Length{Number: x1},
-		Length{Number: y1},
-		Length{Number: x2},
-		Length{Number: y2},
+		pX1,
+		pY1,
+		pX2,
+		pY2,
 		children...,
 	)
 }
 
 // NewLine constructs new Line element
-func NewLine(x1, y1, x2, y2 Length, children ...interface{}) Line {
+func NewLine(x1, y1, x2, y2 *Length, children ...interface{}) Line {
 	l := Line{
 		XMLName: xml.Name{Local: "line"},
 		X1:      x1,

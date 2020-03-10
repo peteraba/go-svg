@@ -9,8 +9,8 @@ import (
 
 func TestNewText(t *testing.T) {
 	type args struct {
-		x        Length
-		y        Length
+		x        *Length
+		y        *Length
 		children []interface{}
 	}
 	tests := []struct {
@@ -25,8 +25,8 @@ func TestNewText(t *testing.T) {
 		},
 		{
 			"text width x and y",
-			args{x: Length{Number: 23.43}, y: Length{Number: -43, Type: Em}},
-			Text{XMLName: xml.Name{Local: "text"}, X: Length{Number: 23.43}, Y: Length{Number: -43, Type: Em}},
+			args{x: &Length{Number: 23.43}, y: &Length{Number: -43, Type: Em}},
+			Text{XMLName: xml.Name{Local: "text"}, X: &Length{Number: 23.43}, Y: &Length{Number: -43, Type: Em}},
 		},
 	}
 	for _, tt := range tests {
@@ -57,7 +57,7 @@ func TestT(t *testing.T) {
 		{
 			"text width x and y",
 			args{x: 23.45, y: -34},
-			Text{XMLName: xml.Name{Local: "text"}, X: Length{23.45, ""}, Y: Length{-34, ""}},
+			Text{XMLName: xml.Name{Local: "text"}, X: &Length{23.45, ""}, Y: &Length{-34, ""}},
 		},
 	}
 	for _, tt := range tests {
@@ -74,8 +74,8 @@ func TestText_UnsetFill(t1 *testing.T) {
 
 	type fields struct {
 		XMLName    xml.Name
-		X          Length
-		Y          Length
+		X          *Length
+		Y          *Length
 		TextAnchor *TextAnchor
 		Fill       *Color
 		Children   []interface{}
@@ -112,8 +112,8 @@ func TestText_UnsetTextAnchor(t1 *testing.T) {
 	var middle = Middle
 	type fields struct {
 		XMLName    xml.Name
-		X          Length
-		Y          Length
+		X          *Length
+		Y          *Length
 		TextAnchor *TextAnchor
 		Fill       *Color
 		Children   []interface{}
@@ -156,7 +156,7 @@ func TestText_MarshalText(t *testing.T) {
 		{
 			"simple text",
 			T(0, 100),
-			[]string{`<text x="0" y="100"></text>`},
+			[]string{`<text y="100"></text>`},
 			false,
 		},
 	}

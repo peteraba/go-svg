@@ -8,10 +8,10 @@ import (
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/ellipse
 type Ellipse struct {
 	XMLName       xml.Name
-	CX            Length   `xml:"cx,attr,omitempty"`
-	CY            Length   `xml:"cy,attr,omitempty"`
-	RX            Length   `xml:"rx,attr,omitempty"`
-	RY            Length   `xml:"ry,attr,omitempty"`
+	CX            *Length  `xml:"cx,attr,omitempty"`
+	CY            *Length  `xml:"cy,attr,omitempty"`
+	RX            *Length  `xml:"rx,attr,omitempty"`
+	RY            *Length  `xml:"ry,attr,omitempty"`
 	Stroke        *Color   `xml:"stroke,attr,omitempty"`
 	StrokeWidth   *uint8   `xml:"stroke-width,attr,omitempty"`
 	StrokeOpacity *Opacity `xml:"stroke-opacity,attr,omitempty"`
@@ -23,17 +23,37 @@ type Ellipse struct {
 
 // E constructs new Ellipse element (shortcut)
 func E(cx, cy, rx, ry float64, children ...interface{}) Ellipse {
+	var (
+		pCx, pCy, pRx, pRy *Length
+	)
+
+	if cx != 0.0 {
+		pCx = &Length{Number: cx}
+	}
+
+	if cy != 0.0 {
+		pCy = &Length{Number: cy}
+	}
+
+	if rx != 0.0 {
+		pRx = &Length{Number: rx}
+	}
+
+	if ry != 0.0 {
+		pRy = &Length{Number: ry}
+	}
+
 	return NewEllipse(
-		Length{Number: cx},
-		Length{Number: cy},
-		Length{Number: rx},
-		Length{Number: ry},
+		pCx,
+		pCy,
+		pRx,
+		pRy,
 		children...,
 	)
 }
 
 // NewEllipse constructs new Ellipse element
-func NewEllipse(cx, cy, rx, ry Length, children ...interface{}) Ellipse {
+func NewEllipse(cx, cy, rx, ry *Length, children ...interface{}) Ellipse {
 	c := Ellipse{
 		XMLName: xml.Name{Local: "ellipse"},
 		CX:      cx,

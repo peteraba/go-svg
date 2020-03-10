@@ -8,12 +8,12 @@ import (
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/rect
 type Rect struct {
 	XMLName       xml.Name
-	X             Length   `xml:"x,attr,omitempty"`
-	Y             Length   `xml:"y,attr,omitempty"`
-	Width         Length   `xml:"width,attr,omitempty"`
-	Height        Length   `xml:"height,attr,omitempty"`
-	RX            Length   `xml:"rx,attr,omitempty"`
-	RY            Length   `xml:"ry,attr,omitempty"`
+	X             *Length  `xml:"x,attr,omitempty"`
+	Y             *Length  `xml:"y,attr,omitempty"`
+	Width         *Length  `xml:"width,attr,omitempty"`
+	Height        *Length  `xml:"height,attr,omitempty"`
+	RX            *Length  `xml:"rx,attr,omitempty"`
+	RY            *Length  `xml:"ry,attr,omitempty"`
 	Stroke        *Color   `xml:"stroke,attr,omitempty"`
 	StrokeWidth   *uint8   `xml:"stroke-width,attr,omitempty"`
 	StrokeOpacity *Opacity `xml:"stroke-opacity,attr,omitempty"`
@@ -25,19 +25,39 @@ type Rect struct {
 
 // R constructs new Rect element (shortcut)
 func R(x, y, width, height float64, children ...interface{}) Rect {
+	var (
+		pX, pY, pWidth, pHeight *Length
+	)
+
+	if x != 0.0 {
+		pX = &Length{Number: x}
+	}
+
+	if y != 0.0 {
+		pY = &Length{Number: y}
+	}
+
+	if width != 0.0 {
+		pWidth = &Length{Number: width}
+	}
+
+	if height != 0.0 {
+		pHeight = &Length{Number: height}
+	}
+
 	return NewRect(
-		Length{Number: x},
-		Length{Number: y},
-		Length{Number: width},
-		Length{Number: height},
-		Length{},
-		Length{},
+		pX,
+		pY,
+		pWidth,
+		pHeight,
+		nil,
+		nil,
 		children...,
 	)
 }
 
 // NewRect constructs new Rect element
-func NewRect(x, y, width, height, rx, ry Length, children ...interface{}) Rect {
+func NewRect(x, y, width, height, rx, ry *Length, children ...interface{}) Rect {
 	c := Rect{
 		XMLName: xml.Name{Local: "rect"},
 		X:       x,

@@ -8,8 +8,8 @@ import (
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/tspan
 type TSpan struct {
 	XMLName  xml.Name
-	X        Length  `xml:"x,attr,omitempty"`
-	Y        Length  `xml:"y,attr,omitempty"`
+	X        *Length `xml:"x,attr,omitempty"`
+	Y        *Length `xml:"y,attr,omitempty"`
 	DX       *Length `xml:"dx,attr,omitempty"`
 	DY       *Length `xml:"dy,attr,omitempty"`
 	Text     string  `xml:",innerxml"`
@@ -35,14 +35,14 @@ func NewTSpan(text string, children ...interface{}) TSpan {
 
 // SetX sets the X attribute of a TSpan
 func (ts TSpan) SetX(x Length) TSpan {
-	ts.X = x
+	ts.X = &x
 
 	return ts
 }
 
 // SetY sets the Y attribute of a TSpan
 func (ts TSpan) SetY(y Length) TSpan {
-	ts.Y = y
+	ts.Y = &y
 
 	return ts
 }
@@ -63,14 +63,14 @@ func (ts TSpan) SetDy(dy Length) TSpan {
 
 // SX sets the X attribute of a TSpan (shortcut)
 func (ts TSpan) SX(x float64) TSpan {
-	ts.X = Length{Number: x}
+	ts.X = &Length{Number: x}
 
 	return ts
 }
 
 // SY sets the Y attribute of a TSpan (shortcut)
 func (ts TSpan) SY(y float64) TSpan {
-	ts.Y = Length{Number: y}
+	ts.Y = &Length{Number: y}
 
 	return ts
 }

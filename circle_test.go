@@ -22,7 +22,7 @@ func TestC(t *testing.T) {
 		{
 			"simple circle",
 			args{cx: 1, cy: 2, r: 4.2},
-			Circle{XMLName: xml.Name{Local: "circle"}, CX: Length{Number: 1}, CY: Length{Number: 2}, R: Length{Number: 4.2}},
+			Circle{XMLName: xml.Name{Local: "circle"}, CX: &Length{Number: 1}, CY: &Length{Number: 2}, R: &Length{Number: 4.2}},
 		},
 	}
 	for _, tt := range tests {
@@ -36,9 +36,9 @@ func TestC(t *testing.T) {
 
 func TestNewCircle(t *testing.T) {
 	type args struct {
-		cx       Length
-		cy       Length
-		r        Length
+		cx       *Length
+		cy       *Length
+		r        *Length
 		children []interface{}
 	}
 	tests := []struct {
@@ -48,8 +48,8 @@ func TestNewCircle(t *testing.T) {
 	}{
 		{
 			"simple circle",
-			args{cx: Length{Number: 1}, cy: Length{Number: 2}, r: Length{Number: 4.2}},
-			Circle{XMLName: xml.Name{Local: "circle"}, CX: Length{Number: 1}, CY: Length{Number: 2}, R: Length{Number: 4.2}},
+			args{cx: &Length{Number: 1}, cy: &Length{Number: 2}, r: &Length{Number: 4.2}},
+			Circle{XMLName: xml.Name{Local: "circle"}, CX: &Length{Number: 1}, CY: &Length{Number: 2}, R: &Length{Number: 4.2}},
 		},
 	}
 	for _, tt := range tests {
@@ -71,7 +71,7 @@ func TestCircle_MarshalText(t *testing.T) {
 		{
 			"simple circle",
 			C(0, 100, 50),
-			[]string{`<circle cx="0" cy="100" r="50"></circle>`},
+			[]string{`<circle cy="100" r="50"></circle>`},
 			false,
 		},
 	}

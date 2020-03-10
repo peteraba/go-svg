@@ -9,10 +9,10 @@ import (
 
 func TestNewLine(t *testing.T) {
 	type args struct {
-		x1       Length
-		y1       Length
-		x2       Length
-		y2       Length
+		x1       *Length
+		y1       *Length
+		x2       *Length
+		y2       *Length
 		children []interface{}
 	}
 	tests := []struct {
@@ -22,8 +22,8 @@ func TestNewLine(t *testing.T) {
 	}{
 		{
 			"simple line",
-			args{x1: Length{Number: 1}, y1: Length{Number: 2}, x2: Length{Number: -4.2}, y2: Length{Number: 4, Type: Em}},
-			Line{XMLName: xml.Name{Local: "line"}, X1: Length{Number: 1}, Y1: Length{Number: 2}, X2: Length{Number: -4.2}, Y2: Length{Number: 4, Type: Em}},
+			args{x1: &Length{Number: 1}, y1: &Length{Number: 2}, x2: &Length{Number: -4.2}, y2: &Length{Number: 4, Type: Em}},
+			Line{XMLName: xml.Name{Local: "line"}, X1: &Length{Number: 1}, Y1: &Length{Number: 2}, X2: &Length{Number: -4.2}, Y2: &Length{Number: 4, Type: Em}},
 		},
 	}
 	for _, tt := range tests {
@@ -45,7 +45,7 @@ func TestLine_MarshalText(t *testing.T) {
 		{
 			"simple line",
 			L(0, 100, 200, 150),
-			[]string{`<line x1="0" y1="100" x2="200" y2="150"></line>`},
+			[]string{`<line y1="100" x2="200" y2="150"></line>`},
 			false,
 		},
 	}

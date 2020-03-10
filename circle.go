@@ -8,9 +8,9 @@ import (
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle
 type Circle struct {
 	XMLName       xml.Name
-	CX            Length   `xml:"cx,attr,omitempty"`
-	CY            Length   `xml:"cy,attr,omitempty"`
-	R             Length   `xml:"r,attr,omitempty"`
+	CX            *Length  `xml:"cx,attr,omitempty"`
+	CY            *Length  `xml:"cy,attr,omitempty"`
+	R             *Length  `xml:"r,attr,omitempty"`
 	Stroke        *Color   `xml:"stroke,attr,omitempty"`
 	StrokeWidth   *uint8   `xml:"stroke-width,attr,omitempty"`
 	StrokeOpacity *Opacity `xml:"stroke-opacity,attr,omitempty"`
@@ -22,16 +22,32 @@ type Circle struct {
 
 // C constructs new Circle element (shortcut)
 func C(cx, cy, r float64, children ...interface{}) Circle {
+	var (
+		pCx, pCy, pR *Length
+	)
+
+	if cx != 0.0 {
+		pCx = &Length{Number: cx}
+	}
+
+	if cy != 0.0 {
+		pCy = &Length{Number: cy}
+	}
+
+	if r != 0.0 {
+		pR = &Length{Number: r}
+	}
+
 	return NewCircle(
-		Length{Number: cx},
-		Length{Number: cy},
-		Length{Number: r},
+		pCx,
+		pCy,
+		pR,
 		children...,
 	)
 }
 
 // NewCircle constructs new Circle element
-func NewCircle(cx, cy, r Length, children ...interface{}) Circle {
+func NewCircle(cx, cy, r *Length, children ...interface{}) Circle {
 	c := Circle{
 		XMLName: xml.Name{Local: "circle"},
 		CX:      cx,
