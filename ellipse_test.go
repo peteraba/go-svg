@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestE(t *testing.T) {
+func TestEl(t *testing.T) {
 	type args struct {
 		cx       float64
 		cy       float64
