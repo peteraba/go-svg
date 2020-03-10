@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -22,7 +23,7 @@ func TestNewSVG(t *testing.T) {
 		{
 			"simple svg",
 			args{width: 200, height: 50},
-			SVG{XMLName: xml.Name{Space: "http://www.w3.org/2000/svg", Local: "svg"}, Width: 200, Height: 50, Version: "1.1"},
+			SVG{XMLName: xml.Name{Space: "http://www.w3.org/2000/svg", Local: "svg"}, Width: 200, Height: 50, Version: "1.1", lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -99,18 +100,18 @@ func TestSVG_AddAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			SVG{}.AddAttr("foo", "Foo"),
-			`<SVG foo="Foo"></SVG>`,
+			NewSVG(200, 400).AddAttr("foo", "Foo"),
+			`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="400" version="1.1" foo="Foo"></svg>`,
 		},
 		{
 			"multiple attributes",
-			SVG{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
-			`<SVG foo="Foo" bar="Bar"></SVG>`,
+			NewSVG(200, 400).AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="400" version="1.1" foo="Foo" bar="Bar"></svg>`,
 		},
 		{
 			"single attribute repeated",
-			SVG{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
-			`<SVG foo="Foo" foo="Bar"></SVG>`,
+			NewSVG(200, 400).AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="400" version="1.1" foo="Foo" foo="Bar"></svg>`,
 		},
 	}
 	for _, tt := range tests {
@@ -137,18 +138,18 @@ func TestSVG_RemoveAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			SVG{}.AddAttr("foo", "Foo").RemoveAttr("foo"),
-			`<SVG></SVG>`,
+			NewSVG(200, 400).AddAttr("foo", "Foo").RemoveAttr("foo"),
+			`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="400" version="1.1"></svg>`,
 		},
 		{
 			"multiple attributes",
-			SVG{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
-			`<SVG bar="Bar"></SVG>`,
+			NewSVG(200, 400).AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
+			`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="400" version="1.1" bar="Bar"></svg>`,
 		},
 		{
 			"single attribute repeated",
-			SVG{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
-			`<SVG></SVG>`,
+			NewSVG(200, 400).AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
+			`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="400" version="1.1"></svg>`,
 		},
 	}
 	for _, tt := range tests {

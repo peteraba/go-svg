@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -23,7 +24,7 @@ func TestE(t *testing.T) {
 		{
 			"simple ellipse",
 			args{cx: 1, cy: 2, rx: 4.2, ry: 3.1},
-			Ellipse{XMLName: xml.Name{Local: "ellipse"}, CX: &Length{Number: 1}, CY: &Length{Number: 2}, RX: &Length{Number: 4.2}, RY: &Length{Number: 3.1}},
+			Ellipse{XMLName: xml.Name{Local: "ellipse"}, CX: &Length{Number: 1}, CY: &Length{Number: 2}, RX: &Length{Number: 4.2}, RY: &Length{Number: 3.1}, lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -51,7 +52,7 @@ func TestNewEllipse(t *testing.T) {
 		{
 			"simple ellipse",
 			args{cx: &Length{Number: 1}, cy: &Length{Number: 2}, rx: &Length{Number: 4.2}, ry: &Length{Number: 3.1}},
-			Ellipse{XMLName: xml.Name{Local: "ellipse"}, CX: &Length{Number: 1}, CY: &Length{Number: 2}, RX: &Length{Number: 4.2}, RY: &Length{Number: 3.1}},
+			Ellipse{XMLName: xml.Name{Local: "ellipse"}, CX: &Length{Number: 1}, CY: &Length{Number: 2}, RX: &Length{Number: 4.2}, RY: &Length{Number: 3.1}, lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -101,18 +102,18 @@ func TestEllipse_AddAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Ellipse{}.AddAttr("foo", "Foo"),
-			`<Ellipse foo="Foo"></Ellipse>`,
+			El(2, 4, 6, 8).AddAttr("foo", "Foo"),
+			`<ellipse cx="2" cy="4" rx="6" ry="8" foo="Foo"></ellipse>`,
 		},
 		{
 			"multiple attributes",
-			Ellipse{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
-			`<Ellipse foo="Foo" bar="Bar"></Ellipse>`,
+			El(2, 4, 6, 8).AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<ellipse cx="2" cy="4" rx="6" ry="8" foo="Foo" bar="Bar"></ellipse>`,
 		},
 		{
 			"single attribute repeated",
-			Ellipse{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
-			`<Ellipse foo="Foo" foo="Bar"></Ellipse>`,
+			El(2, 4, 6, 8).AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<ellipse cx="2" cy="4" rx="6" ry="8" foo="Foo" foo="Bar"></ellipse>`,
 		},
 	}
 	for _, tt := range tests {
@@ -139,18 +140,18 @@ func TestEllipse_RemoveAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Ellipse{}.AddAttr("foo", "Foo").RemoveAttr("foo"),
-			`<Ellipse></Ellipse>`,
+			El(2, 4, 6, 8).AddAttr("foo", "Foo").RemoveAttr("foo"),
+			`<ellipse cx="2" cy="4" rx="6" ry="8"></ellipse>`,
 		},
 		{
 			"multiple attributes",
-			Ellipse{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
-			`<Ellipse bar="Bar"></Ellipse>`,
+			El(2, 4, 6, 8).AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
+			`<ellipse cx="2" cy="4" rx="6" ry="8" bar="Bar"></ellipse>`,
 		},
 		{
 			"single attribute repeated",
-			Ellipse{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
-			`<Ellipse></Ellipse>`,
+			El(2, 4, 6, 8).AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
+			`<ellipse cx="2" cy="4" rx="6" ry="8"></ellipse>`,
 		},
 	}
 	for _, tt := range tests {

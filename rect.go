@@ -23,7 +23,7 @@ type Rect struct {
 	Opacity       float64    `xml:"opacity,attr,omitempty"`
 	Attrs         []xml.Attr `xml:",attr"`
 	Children      []interface{}
-	l             sync.Mutex
+	lock          *sync.Mutex
 }
 
 // R constructs new Rect element (shortcut)
@@ -69,6 +69,7 @@ func NewRect(x, y, width, height, rx, ry *Length, children ...interface{}) Rect 
 		Height:  height,
 		RX:      rx,
 		RY:      ry,
+		lock:    &sync.Mutex{},
 	}
 
 	c.Children = append(c.Children, children...)
@@ -161,16 +162,16 @@ func (r Rect) SetOpacity(o float64) Rect {
 
 // AddAttr adds a new attribute of a Rect
 func (r Rect) AddAttr(name, value string) Rect {
-	r.l.Lock()
+	r.lock.Lock()
 	r.Attrs = append(r.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
-	r.l.Unlock()
+	r.lock.Unlock()
 
 	return r
 }
 
 // RemoveAttr removes all attributes of a given name of a Rect
 func (r Rect) RemoveAttr(name string) Rect {
-	r.l.Lock()
+	r.lock.Lock()
 	var attrs []xml.Attr
 	for _, attr := range r.Attrs {
 		if attr.Name.Local != name {
@@ -178,7 +179,7 @@ func (r Rect) RemoveAttr(name string) Rect {
 		}
 	}
 	r.Attrs = attrs
-	r.l.Unlock()
+	r.lock.Unlock()
 
 	return r
 }

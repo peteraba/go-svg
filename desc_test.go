@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -20,7 +21,7 @@ func TestNewDesc(t *testing.T) {
 		{
 			"simple desc",
 			args{"Foo", nil},
-			Desc{XMLName: xml.Name{Local: "desc"}, Text: "Foo"},
+			Desc{XMLName: xml.Name{Local: "desc"}, Text: "Foo", lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -70,18 +71,18 @@ func TestDesc_AddAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Desc{}.AddAttr("foo", "Foo"),
-			`<Desc foo="Foo"></Desc>`,
+			NewDesc("baz").AddAttr("foo", "Foo"),
+			`<desc foo="Foo">baz</desc>`,
 		},
 		{
 			"multiple attributes",
-			Desc{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
-			`<Desc foo="Foo" bar="Bar"></Desc>`,
+			NewDesc("baz").AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<desc foo="Foo" bar="Bar">baz</desc>`,
 		},
 		{
 			"single attribute repeated",
-			Desc{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
-			`<Desc foo="Foo" foo="Bar"></Desc>`,
+			NewDesc("baz").AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<desc foo="Foo" foo="Bar">baz</desc>`,
 		},
 	}
 	for _, tt := range tests {
@@ -108,18 +109,18 @@ func TestDesc_RemoveAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Desc{}.AddAttr("foo", "Foo").RemoveAttr("foo"),
-			`<Desc></Desc>`,
+			NewDesc("baz").AddAttr("foo", "Foo").RemoveAttr("foo"),
+			`<desc>baz</desc>`,
 		},
 		{
 			"multiple attributes",
-			Desc{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
-			`<Desc bar="Bar"></Desc>`,
+			NewDesc("baz").AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
+			`<desc bar="Bar">baz</desc>`,
 		},
 		{
 			"single attribute repeated",
-			Desc{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
-			`<Desc></Desc>`,
+			NewDesc("baz").AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
+			`<desc>baz</desc>`,
 		},
 	}
 	for _, tt := range tests {

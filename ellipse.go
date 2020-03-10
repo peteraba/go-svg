@@ -21,7 +21,7 @@ type Ellipse struct {
 	Opacity       float64    `xml:"opacity,attr,omitempty"`
 	Attrs         []xml.Attr `xml:",attr"`
 	Children      []interface{}
-	l             sync.Mutex
+	lock          *sync.Mutex
 }
 
 // El constructs new Ellipse element (shortcut)
@@ -63,6 +63,7 @@ func NewEllipse(cx, cy, rx, ry *Length, children ...interface{}) Ellipse {
 		CY:      cy,
 		RX:      rx,
 		RY:      ry,
+		lock:    &sync.Mutex{},
 	}
 
 	c.Children = append(c.Children, children...)
@@ -155,16 +156,16 @@ func (el Ellipse) SetOpacity(o float64) Ellipse {
 
 // AddAttr adds a new attribute of a Ellipse
 func (el Ellipse) AddAttr(name, value string) Ellipse {
-	el.l.Lock()
+	el.lock.Lock()
 	el.Attrs = append(el.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
-	el.l.Unlock()
+	el.lock.Unlock()
 
 	return el
 }
 
 // RemoveAttr removes all attributes of a given name of a Ellipse
 func (el Ellipse) RemoveAttr(name string) Ellipse {
-	el.l.Lock()
+	el.lock.Lock()
 	var attrs []xml.Attr
 	for _, attr := range el.Attrs {
 		if attr.Name.Local != name {
@@ -172,7 +173,7 @@ func (el Ellipse) RemoveAttr(name string) Ellipse {
 		}
 	}
 	el.Attrs = attrs
-	el.l.Unlock()
+	el.lock.Unlock()
 
 	return el
 }

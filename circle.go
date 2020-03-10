@@ -20,7 +20,7 @@ type Circle struct {
 	Opacity       float64    `xml:"opacity,attr,omitempty"`
 	Attrs         []xml.Attr `xml:",attr"`
 	Children      []interface{}
-	l             sync.Mutex
+	lock          *sync.Mutex
 }
 
 // C constructs new Circle element (shortcut)
@@ -56,6 +56,7 @@ func NewCircle(cx, cy, r *Length, children ...interface{}) Circle {
 		CX:      cx,
 		CY:      cy,
 		R:       r,
+		lock:    &sync.Mutex{},
 	}
 
 	c.Children = append(c.Children, children...)
@@ -148,16 +149,16 @@ func (c Circle) SetOpacity(o float64) Circle {
 
 // AddAttr adds a new attribute to a Circle
 func (c Circle) AddAttr(name, value string) Circle {
-	c.l.Lock()
+	c.lock.Lock()
 	c.Attrs = append(c.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
-	c.l.Unlock()
+	c.lock.Unlock()
 
 	return c
 }
 
 // RemoveAttr removes all attributes of a given name of a Circle
 func (c Circle) RemoveAttr(name string) Circle {
-	c.l.Lock()
+	c.lock.Lock()
 	attrs := []xml.Attr{}
 	for _, attr := range c.Attrs {
 		if attr.Name.Local != name {
@@ -165,7 +166,7 @@ func (c Circle) RemoveAttr(name string) Circle {
 		}
 	}
 	c.Attrs = attrs
-	c.l.Unlock()
+	c.lock.Unlock()
 
 	return c
 }

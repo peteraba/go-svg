@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -19,7 +20,7 @@ func TestNewGroup(t *testing.T) {
 		{
 			"simple group",
 			args{},
-			Group{XMLName: xml.Name{Local: "g"}},
+			Group{XMLName: xml.Name{Local: "g"}, lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -69,18 +70,18 @@ func TestGroup_AddAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Group{}.AddAttr("foo", "Foo"),
-			`<Group foo="Foo"></Group>`,
+			NewGroup().AddAttr("foo", "Foo"),
+			`<g foo="Foo"></g>`,
 		},
 		{
 			"multiple attributes",
-			Group{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
-			`<Group foo="Foo" bar="Bar"></Group>`,
+			NewGroup().AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<g foo="Foo" bar="Bar"></g>`,
 		},
 		{
 			"single attribute repeated",
-			Group{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
-			`<Group foo="Foo" foo="Bar"></Group>`,
+			NewGroup().AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<g foo="Foo" foo="Bar"></g>`,
 		},
 	}
 	for _, tt := range tests {
@@ -107,18 +108,18 @@ func TestGroup_RemoveAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Group{}.AddAttr("foo", "Foo").RemoveAttr("foo"),
-			`<Group></Group>`,
+			NewGroup().AddAttr("foo", "Foo").RemoveAttr("foo"),
+			`<g></g>`,
 		},
 		{
 			"multiple attributes",
-			Group{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
-			`<Group bar="Bar"></Group>`,
+			NewGroup().AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
+			`<g bar="Bar"></g>`,
 		},
 		{
 			"single attribute repeated",
-			Group{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
-			`<Group></Group>`,
+			NewGroup().AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
+			`<g></g>`,
 		},
 	}
 	for _, tt := range tests {

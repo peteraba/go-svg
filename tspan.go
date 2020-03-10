@@ -16,7 +16,7 @@ type TSpan struct {
 	Attrs    []xml.Attr `xml:",attr"`
 	Text     string     `xml:",innerxml"`
 	Children []interface{}
-	l        sync.Mutex
+	lock     *sync.Mutex
 }
 
 // TS constructs new TSpan element (shortcut)
@@ -29,6 +29,7 @@ func NewTSpan(text string, children ...interface{}) TSpan {
 	ts := TSpan{
 		XMLName: xml.Name{Local: "tspan"},
 		Text:    text,
+		lock:    &sync.Mutex{},
 	}
 
 	ts.Children = append(ts.Children, children...)
@@ -108,16 +109,16 @@ func (ts TSpan) UnsetDy() TSpan {
 
 // AddAttr adds a new attribute of a TSpan
 func (ts TSpan) AddAttr(name, value string) TSpan {
-	ts.l.Lock()
+	ts.lock.Lock()
 	ts.Attrs = append(ts.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
-	ts.l.Unlock()
+	ts.lock.Unlock()
 
 	return ts
 }
 
 // RemoveAttr removes all attributes of a given name of a TSpan
 func (ts TSpan) RemoveAttr(name string) TSpan {
-	ts.l.Lock()
+	ts.lock.Lock()
 	attrs := []xml.Attr{}
 	for _, attr := range ts.Attrs {
 		if attr.Name.Local != name {
@@ -125,7 +126,7 @@ func (ts TSpan) RemoveAttr(name string) TSpan {
 		}
 	}
 	ts.Attrs = attrs
-	ts.l.Unlock()
+	ts.lock.Unlock()
 
 	return ts
 }

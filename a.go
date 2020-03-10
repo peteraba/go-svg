@@ -14,7 +14,7 @@ type A struct {
 	Type     string     `xml:"type,attr,omitempty"`
 	Attrs    []xml.Attr `xml:",attr"`
 	Children []interface{}
-	l        sync.Mutex
+	lock     *sync.Mutex
 }
 
 // NewA constructs new A element
@@ -22,6 +22,7 @@ func NewA(href string, children ...interface{}) A {
 	a := A{
 		XMLName: xml.Name{Local: "a"},
 		Href:    href,
+		lock:    &sync.Mutex{},
 	}
 
 	a.Children = append(a.Children, children...)
@@ -45,16 +46,16 @@ func (a A) SetType(t string) A {
 
 // AddAttr adds a new attribute of an A tag
 func (a A) AddAttr(name, value string) A {
-	a.l.Lock()
+	a.lock.Lock()
 	a.Attrs = append(a.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
-	a.l.Unlock()
+	a.lock.Unlock()
 
 	return a
 }
 
 // RemoveAttr removes all attributes of a given name of an A tag
 func (a A) RemoveAttr(name string) A {
-	a.l.Lock()
+	a.lock.Lock()
 	attrs := []xml.Attr{}
 	for _, attr := range a.Attrs {
 		if attr.Name.Local != name {
@@ -62,7 +63,7 @@ func (a A) RemoveAttr(name string) A {
 		}
 	}
 	a.Attrs = attrs
-	a.l.Unlock()
+	a.lock.Unlock()
 
 	return a
 }

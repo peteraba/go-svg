@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -21,12 +22,12 @@ func TestNewText(t *testing.T) {
 		{
 			"simple text",
 			args{},
-			Text{XMLName: xml.Name{Local: "text"}},
+			Text{XMLName: xml.Name{Local: "text"}, lock: &sync.Mutex{}},
 		},
 		{
 			"text width x and y",
 			args{x: &Length{Number: 23.43}, y: &Length{Number: -43, Type: Em}},
-			Text{XMLName: xml.Name{Local: "text"}, X: &Length{Number: 23.43}, Y: &Length{Number: -43, Type: Em}},
+			Text{XMLName: xml.Name{Local: "text"}, X: &Length{Number: 23.43}, Y: &Length{Number: -43, Type: Em}, lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -52,12 +53,12 @@ func TestT(t *testing.T) {
 		{
 			"simple text",
 			args{},
-			Text{XMLName: xml.Name{Local: "text"}},
+			Text{XMLName: xml.Name{Local: "text"}, lock: &sync.Mutex{}},
 		},
 		{
 			"text width x and y",
 			args{x: 23.45, y: -34},
-			Text{XMLName: xml.Name{Local: "text"}, X: &Length{23.45, ""}, Y: &Length{-34, ""}},
+			Text{XMLName: xml.Name{Local: "text"}, X: &Length{23.45, ""}, Y: &Length{-34, ""}, lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -184,18 +185,18 @@ func TestText_AddAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Text{}.AddAttr("foo", "Foo"),
-			`<Text foo="Foo"></Text>`,
+			T(2, 4).AddAttr("foo", "Foo"),
+			`<text x="2" y="4" foo="Foo"></text>`,
 		},
 		{
 			"multiple attributes",
-			Text{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
-			`<Text foo="Foo" bar="Bar"></Text>`,
+			T(2, 4).AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<text x="2" y="4" foo="Foo" bar="Bar"></text>`,
 		},
 		{
 			"single attribute repeated",
-			Text{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
-			`<Text foo="Foo" foo="Bar"></Text>`,
+			T(2, 4).AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<text x="2" y="4" foo="Foo" foo="Bar"></text>`,
 		},
 	}
 	for _, tt := range tests {
@@ -222,18 +223,18 @@ func TestText_RemoveAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Text{}.AddAttr("foo", "Foo").RemoveAttr("foo"),
-			`<Text></Text>`,
+			T(2, 4).AddAttr("foo", "Foo").RemoveAttr("foo"),
+			`<text x="2" y="4"></text>`,
 		},
 		{
 			"multiple attributes",
-			Text{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
-			`<Text bar="Bar"></Text>`,
+			T(2, 4).AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
+			`<text x="2" y="4" bar="Bar"></text>`,
 		},
 		{
 			"single attribute repeated",
-			Text{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
-			`<Text></Text>`,
+			T(2, 4).AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
+			`<text x="2" y="4"></text>`,
 		},
 	}
 	for _, tt := range tests {

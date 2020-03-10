@@ -15,7 +15,7 @@ type Text struct {
 	Fill       *Color      `xml:"stroke,attr,omitempty"`
 	Attrs      []xml.Attr  `xml:",attr"`
 	Children   []interface{}
-	l          sync.Mutex
+	lock       *sync.Mutex
 }
 
 // T constructs new Text element (shortcut)
@@ -46,6 +46,7 @@ func NewText(x, y *Length, children ...interface{}) Text {
 		XMLName: xml.Name{Local: "text"},
 		X:       x,
 		Y:       y,
+		lock:    &sync.Mutex{},
 	}
 
 	t.Children = append(t.Children, children...)
@@ -83,16 +84,16 @@ func (t Text) UnsetTextAnchor() Text {
 
 // AddAttr adds a new attribute of a Text
 func (t Text) AddAttr(name, value string) Text {
-	t.l.Lock()
+	t.lock.Lock()
 	t.Attrs = append(t.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
-	t.l.Unlock()
+	t.lock.Unlock()
 
 	return t
 }
 
 // RemoveAttr removes all attributes of a given name of a Text
 func (t Text) RemoveAttr(name string) Text {
-	t.l.Lock()
+	t.lock.Lock()
 	var attrs []xml.Attr
 	for _, attr := range t.Attrs {
 		if attr.Name.Local != name {
@@ -100,7 +101,7 @@ func (t Text) RemoveAttr(name string) Text {
 		}
 	}
 	t.Attrs = attrs
-	t.l.Unlock()
+	t.lock.Unlock()
 
 	return t
 }

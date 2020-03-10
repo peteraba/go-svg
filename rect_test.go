@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -23,7 +24,7 @@ func TestR(t *testing.T) {
 		{
 			"simple rect",
 			args{x: 1, y: 2, width: 4.2, height: 3.1},
-			Rect{XMLName: xml.Name{Local: "rect"}, X: &Length{Number: 1}, Y: &Length{Number: 2}, Width: &Length{Number: 4.2}, Height: &Length{Number: 3.1}},
+			Rect{XMLName: xml.Name{Local: "rect"}, X: &Length{Number: 1}, Y: &Length{Number: 2}, Width: &Length{Number: 4.2}, Height: &Length{Number: 3.1}, lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -53,7 +54,7 @@ func TestNewRect(t *testing.T) {
 		{
 			"simple rect",
 			args{x: &Length{Number: 1}, y: &Length{Number: 2}, width: &Length{Number: 20}, height: &Length{Number: 10}, rx: &Length{Number: 4.2}, ry: &Length{Number: 3.1}},
-			Rect{XMLName: xml.Name{Local: "rect"}, X: &Length{Number: 1}, Y: &Length{Number: 2}, Width: &Length{Number: 20}, Height: &Length{Number: 10}, RX: &Length{Number: 4.2}, RY: &Length{Number: 3.1}},
+			Rect{XMLName: xml.Name{Local: "rect"}, X: &Length{Number: 1}, Y: &Length{Number: 2}, Width: &Length{Number: 20}, Height: &Length{Number: 10}, RX: &Length{Number: 4.2}, RY: &Length{Number: 3.1}, lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -103,18 +104,18 @@ func TestRect_AddAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Rect{}.AddAttr("foo", "Foo"),
-			`<Rect foo="Foo"></Rect>`,
+			R(2, 4, 6, 8).AddAttr("foo", "Foo"),
+			`<rect x="2" y="4" width="6" height="8" foo="Foo"></rect>`,
 		},
 		{
 			"multiple attributes",
-			Rect{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
-			`<Rect foo="Foo" bar="Bar"></Rect>`,
+			R(2, 4, 6, 8).AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<rect x="2" y="4" width="6" height="8" foo="Foo" bar="Bar"></rect>`,
 		},
 		{
 			"single attribute repeated",
-			Rect{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
-			`<Rect foo="Foo" foo="Bar"></Rect>`,
+			R(2, 4, 6, 8).AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<rect x="2" y="4" width="6" height="8" foo="Foo" foo="Bar"></rect>`,
 		},
 	}
 	for _, tt := range tests {
@@ -141,18 +142,18 @@ func TestRect_RemoveAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Rect{}.AddAttr("foo", "Foo").RemoveAttr("foo"),
-			`<Rect></Rect>`,
+			R(2, 4, 6, 8).AddAttr("foo", "Foo").RemoveAttr("foo"),
+			`<rect x="2" y="4" width="6" height="8"></rect>`,
 		},
 		{
 			"multiple attributes",
-			Rect{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
-			`<Rect bar="Bar"></Rect>`,
+			R(2, 4, 6, 8).AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
+			`<rect x="2" y="4" width="6" height="8" bar="Bar"></rect>`,
 		},
 		{
 			"single attribute repeated",
-			Rect{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
-			`<Rect></Rect>`,
+			R(2, 4, 6, 8).AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
+			`<rect x="2" y="4" width="6" height="8"></rect>`,
 		},
 	}
 	for _, tt := range tests {

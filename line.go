@@ -21,7 +21,7 @@ type Line struct {
 	Opacity       float64    `xml:"opacity,attr,omitempty"`
 	Attrs         []xml.Attr `xml:",attr"`
 	Children      []interface{}
-	l             sync.Mutex
+	lock          *sync.Mutex
 }
 
 // L constructs new Line element (shortcut)
@@ -63,6 +63,7 @@ func NewLine(x1, y1, x2, y2 *Length, children ...interface{}) Line {
 		Y1:      y1,
 		X2:      x2,
 		Y2:      y2,
+		lock:    &sync.Mutex{},
 	}
 
 	l.Children = append(l.Children, children...)
@@ -155,16 +156,16 @@ func (l Line) SetOpacity(o float64) Line {
 
 // AddAttr adds a new attribute of a Line
 func (l Line) AddAttr(name, value string) Line {
-	l.l.Lock()
+	l.lock.Lock()
 	l.Attrs = append(l.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
-	l.l.Unlock()
+	l.lock.Unlock()
 
 	return l
 }
 
 // RemoveAttr removes all attributes of a given name of a Line
 func (l Line) RemoveAttr(name string) Line {
-	l.l.Lock()
+	l.lock.Lock()
 	var attrs []xml.Attr
 	for _, attr := range l.Attrs {
 		if attr.Name.Local != name {
@@ -172,7 +173,7 @@ func (l Line) RemoveAttr(name string) Line {
 		}
 	}
 	l.Attrs = attrs
-	l.l.Unlock()
+	l.lock.Unlock()
 
 	return l
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -22,7 +23,7 @@ func TestC(t *testing.T) {
 		{
 			"simple circle",
 			args{cx: 1, cy: 2, r: 4.2},
-			Circle{XMLName: xml.Name{Local: "circle"}, CX: &Length{Number: 1}, CY: &Length{Number: 2}, R: &Length{Number: 4.2}},
+			Circle{XMLName: xml.Name{Local: "circle"}, CX: &Length{Number: 1}, CY: &Length{Number: 2}, R: &Length{Number: 4.2}, lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -49,7 +50,7 @@ func TestNewCircle(t *testing.T) {
 		{
 			"simple circle",
 			args{cx: &Length{Number: 1}, cy: &Length{Number: 2}, r: &Length{Number: 4.2}},
-			Circle{XMLName: xml.Name{Local: "circle"}, CX: &Length{Number: 1}, CY: &Length{Number: 2}, R: &Length{Number: 4.2}},
+			Circle{XMLName: xml.Name{Local: "circle"}, CX: &Length{Number: 1}, CY: &Length{Number: 2}, R: &Length{Number: 4.2}, lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -105,18 +106,18 @@ func TestCircle_AddAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Circle{}.AddAttr("foo", "Foo"),
-			`<Circle foo="Foo"></Circle>`,
+			C(2, 4, 6).AddAttr("foo", "Foo"),
+			`<circle cx="2" cy="4" r="6" foo="Foo"></circle>`,
 		},
 		{
 			"multiple attributes",
-			Circle{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
-			`<Circle foo="Foo" bar="Bar"></Circle>`,
+			C(2, 4, 6).AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<circle cx="2" cy="4" r="6" foo="Foo" bar="Bar"></circle>`,
 		},
 		{
 			"single attribute repeated",
-			Circle{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
-			`<Circle foo="Foo" foo="Bar"></Circle>`,
+			C(2, 4, 6).AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<circle cx="2" cy="4" r="6" foo="Foo" foo="Bar"></circle>`,
 		},
 	}
 	for _, tt := range tests {
@@ -143,18 +144,18 @@ func TestCircle_RemoveAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Circle{}.AddAttr("href", "Foo").RemoveAttr("href"),
-			`<Circle></Circle>`,
+			C(2, 4, 6).AddAttr("href", "Foo").RemoveAttr("href"),
+			`<circle cx="2" cy="4" r="6"></circle>`,
 		},
 		{
 			"multiple attributes",
-			Circle{}.AddAttr("href", "Foo").AddAttr("bar", "Bar").RemoveAttr("href"),
-			`<Circle bar="Bar"></Circle>`,
+			C(2, 4, 6).AddAttr("href", "Foo").AddAttr("bar", "Bar").RemoveAttr("href"),
+			`<circle cx="2" cy="4" r="6" bar="Bar"></circle>`,
 		},
 		{
 			"single attribute repeated",
-			Circle{}.AddAttr("href", "Foo").AddAttr("href", "Bar").RemoveAttr("href"),
-			`<Circle></Circle>`,
+			C(2, 4, 6).AddAttr("href", "Foo").AddAttr("href", "Bar").RemoveAttr("href"),
+			`<circle cx="2" cy="4" r="6"></circle>`,
 		},
 	}
 	for _, tt := range tests {

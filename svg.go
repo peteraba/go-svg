@@ -12,7 +12,7 @@ type SVG struct {
 	Version  string     `xml:"version,attr,omitempty"`
 	Attrs    []xml.Attr `xml:",attr"`
 	Children []interface{}
-	l        sync.Mutex
+	lock     *sync.Mutex
 }
 
 func NewSVG(width, height float64, children ...interface{}) SVG {
@@ -21,6 +21,7 @@ func NewSVG(width, height float64, children ...interface{}) SVG {
 		Width:   width,
 		Height:  height,
 		Version: "1.1",
+		lock:    &sync.Mutex{},
 	}
 
 	s.Children = append(s.Children, children...)
@@ -30,16 +31,16 @@ func NewSVG(width, height float64, children ...interface{}) SVG {
 
 // AddAttr adds a new attribute of an SVG tag
 func (s SVG) AddAttr(name, value string) SVG {
-	s.l.Lock()
+	s.lock.Lock()
 	s.Attrs = append(s.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
-	s.l.Unlock()
+	s.lock.Unlock()
 
 	return s
 }
 
 // RemoveAttr removes all attributes of a given name of an SVG tag
 func (s SVG) RemoveAttr(name string) SVG {
-	s.l.Lock()
+	s.lock.Lock()
 	var attrs []xml.Attr
 	for _, attr := range s.Attrs {
 		if attr.Name.Local != name {
@@ -47,7 +48,7 @@ func (s SVG) RemoveAttr(name string) SVG {
 		}
 	}
 	s.Attrs = attrs
-	s.l.Unlock()
+	s.lock.Unlock()
 
 	return s
 }

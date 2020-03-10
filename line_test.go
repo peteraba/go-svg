@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -23,7 +24,7 @@ func TestNewLine(t *testing.T) {
 		{
 			"simple line",
 			args{x1: &Length{Number: 1}, y1: &Length{Number: 2}, x2: &Length{Number: -4.2}, y2: &Length{Number: 4, Type: Em}},
-			Line{XMLName: xml.Name{Local: "line"}, X1: &Length{Number: 1}, Y1: &Length{Number: 2}, X2: &Length{Number: -4.2}, Y2: &Length{Number: 4, Type: Em}},
+			Line{XMLName: xml.Name{Local: "line"}, X1: &Length{Number: 1}, Y1: &Length{Number: 2}, X2: &Length{Number: -4.2}, Y2: &Length{Number: 4, Type: Em}, lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -73,18 +74,18 @@ func TestLine_AddAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Line{}.AddAttr("foo", "Foo"),
-			`<Line foo="Foo"></Line>`,
+			L(2, 4, 6, 8).AddAttr("foo", "Foo"),
+			`<line x1="2" y1="4" x2="6" y2="8" foo="Foo"></line>`,
 		},
 		{
 			"multiple attributes",
-			Line{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
-			`<Line foo="Foo" bar="Bar"></Line>`,
+			L(2, 4, 6, 8).AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<line x1="2" y1="4" x2="6" y2="8" foo="Foo" bar="Bar"></line>`,
 		},
 		{
 			"single attribute repeated",
-			Line{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
-			`<Line foo="Foo" foo="Bar"></Line>`,
+			L(2, 4, 6, 8).AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<line x1="2" y1="4" x2="6" y2="8" foo="Foo" foo="Bar"></line>`,
 		},
 	}
 	for _, tt := range tests {
@@ -111,18 +112,18 @@ func TestLine_RemoveAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			Line{}.AddAttr("foo", "Foo").RemoveAttr("foo"),
-			`<Line></Line>`,
+			L(2, 4, 6, 8).AddAttr("foo", "Foo").RemoveAttr("foo"),
+			`<line x1="2" y1="4" x2="6" y2="8"></line>`,
 		},
 		{
 			"multiple attributes",
-			Line{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
-			`<Line bar="Bar"></Line>`,
+			L(2, 4, 6, 8).AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
+			`<line x1="2" y1="4" x2="6" y2="8" bar="Bar"></line>`,
 		},
 		{
 			"single attribute repeated",
-			Line{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
-			`<Line></Line>`,
+			L(2, 4, 6, 8).AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
+			`<line x1="2" y1="4" x2="6" y2="8"></line>`,
 		},
 	}
 	for _, tt := range tests {

@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -20,7 +21,7 @@ func TestNewA(t *testing.T) {
 		{
 			"simple anchor",
 			args{href: "http://foo.com/"},
-			A{XMLName: xml.Name{Local: "a"}, Href: "http://foo.com/"},
+			A{XMLName: xml.Name{Local: "a"}, Href: "http://foo.com/", lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -77,18 +78,18 @@ func TestA_AddAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			A{}.AddAttr("foo", "Foo"),
-			`<A foo="Foo"></A>`,
+			NewA("baz").AddAttr("foo", "Foo"),
+			`<a href="baz" foo="Foo"></a>`,
 		},
 		{
 			"multiple attributes",
-			A{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
-			`<A foo="Foo" bar="Bar"></A>`,
+			NewA("baz").AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<a href="baz" foo="Foo" bar="Bar"></a>`,
 		},
 		{
 			"single attribute repeated",
-			A{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
-			`<A foo="Foo" foo="Bar"></A>`,
+			NewA("baz").AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<a href="baz" foo="Foo" foo="Bar"></a>`,
 		},
 	}
 	for _, tt := range tests {
@@ -115,18 +116,18 @@ func TestA_RemoveAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			A{}.AddAttr("foo", "Foo").RemoveAttr("foo"),
-			`<A></A>`,
+			NewA("baz").AddAttr("foo", "Foo").RemoveAttr("foo"),
+			`<a href="baz"></a>`,
 		},
 		{
 			"multiple attributes",
-			A{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
-			`<A bar="Bar"></A>`,
+			NewA("baz").AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
+			`<a href="baz" bar="Bar"></a>`,
 		},
 		{
 			"single attribute repeated",
-			A{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
-			`<A></A>`,
+			NewA("baz").AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
+			`<a href="baz"></a>`,
 		},
 	}
 	for _, tt := range tests {

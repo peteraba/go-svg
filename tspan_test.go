@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -20,7 +21,7 @@ func TestNewTSpan(t *testing.T) {
 		{
 			"simple tspan",
 			args{"Foo", nil},
-			TSpan{XMLName: xml.Name{Local: "tspan"}, Text: "Foo"},
+			TSpan{XMLName: xml.Name{Local: "tspan"}, Text: "Foo", lock: &sync.Mutex{}},
 		},
 	}
 	for _, tt := range tests {
@@ -70,18 +71,18 @@ func TestTSpan_AddAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			TSpan{}.AddAttr("foo", "Foo"),
-			`<TSpan foo="Foo"></TSpan>`,
+			TS("baz").AddAttr("foo", "Foo"),
+			`<tspan foo="Foo">baz</tspan>`,
 		},
 		{
 			"multiple attributes",
-			TSpan{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
-			`<TSpan foo="Foo" bar="Bar"></TSpan>`,
+			TS("baz").AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<tspan foo="Foo" bar="Bar">baz</tspan>`,
 		},
 		{
 			"single attribute repeated",
-			TSpan{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
-			`<TSpan foo="Foo" foo="Bar"></TSpan>`,
+			TS("baz").AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<tspan foo="Foo" foo="Bar">baz</tspan>`,
 		},
 	}
 	for _, tt := range tests {
@@ -108,18 +109,18 @@ func TestTSpan_RemoveAttr(t *testing.T) {
 	}{
 		{
 			"single attribute",
-			TSpan{}.AddAttr("foo", "Foo").RemoveAttr("foo"),
-			`<TSpan></TSpan>`,
+			TS("baz").AddAttr("foo", "Foo").RemoveAttr("foo"),
+			`<tspan>baz</tspan>`,
 		},
 		{
 			"multiple attributes",
-			TSpan{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
-			`<TSpan bar="Bar"></TSpan>`,
+			TS("baz").AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
+			`<tspan bar="Bar">baz</tspan>`,
 		},
 		{
 			"single attribute repeated",
-			TSpan{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
-			`<TSpan></TSpan>`,
+			TS("baz").AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
+			`<tspan>baz</tspan>`,
 		},
 	}
 	for _, tt := range tests {
