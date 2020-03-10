@@ -71,80 +71,6 @@ func TestT(t *testing.T) {
 	}
 }
 
-func TestText_SetFill(t1 *testing.T) {
-	type fields struct {
-		XMLName    xml.Name
-		X          attribute.Length
-		Y          attribute.Length
-		TextAnchor *attribute.TextAnchor
-		Fill       *attribute.Color
-		Children   []interface{}
-	}
-	type args struct {
-		fill attribute.Color
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   Text
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t1.Run(tt.name, func(t1 *testing.T) {
-			t := Text{
-				XMLName:    tt.fields.XMLName,
-				X:          tt.fields.X,
-				Y:          tt.fields.Y,
-				TextAnchor: tt.fields.TextAnchor,
-				Fill:       tt.fields.Fill,
-				Children:   tt.fields.Children,
-			}
-			if got := t.SetFill(tt.args.fill); !reflect.DeepEqual(got, tt.want) {
-				t1.Errorf("SetFill() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestText_SetTextAnchor(t1 *testing.T) {
-	type fields struct {
-		XMLName    xml.Name
-		X          attribute.Length
-		Y          attribute.Length
-		TextAnchor *attribute.TextAnchor
-		Fill       *attribute.Color
-		Children   []interface{}
-	}
-	type args struct {
-		ta attribute.TextAnchor
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   Text
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t1.Run(tt.name, func(t1 *testing.T) {
-			t := Text{
-				XMLName:    tt.fields.XMLName,
-				X:          tt.fields.X,
-				Y:          tt.fields.Y,
-				TextAnchor: tt.fields.TextAnchor,
-				Fill:       tt.fields.Fill,
-				Children:   tt.fields.Children,
-			}
-			if got := t.SetTextAnchor(tt.args.ta); !reflect.DeepEqual(got, tt.want) {
-				t1.Errorf("SetTextAnchor() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestText_UnsetFill(t1 *testing.T) {
 	red, _ := attribute.ColorFromHexaString("#f00")
 
@@ -230,7 +156,7 @@ func TestText_MarshalText(t *testing.T) {
 		wantErr   bool
 	}{
 		{
-			"one line",
+			"simple text",
 			T(0, 100),
 			[]string{`<text x="0" y="100"></text>`},
 			false,

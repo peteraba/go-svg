@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestNewTSpan(t *testing.T) {
+func TestNewDesc(t *testing.T) {
 	type args struct {
 		text     string
 		children []interface{}
@@ -15,34 +15,34 @@ func TestNewTSpan(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want TSpan
+		want Desc
 	}{
 		{
-			"simple tspan",
+			"simple desc",
 			args{"Foo", nil},
-			TSpan{XMLName: xml.Name{Local: "tspan"}, Text: "Foo"},
+			Desc{XMLName: xml.Name{Local: "desc"}, Text: "Foo"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewTSpan(tt.args.text, tt.args.children...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewTSpan() = %v, want %v", got, tt.want)
+			if got := NewDesc(tt.args.text, tt.args.children...); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewDesc() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestTSpan_MarshalText(t *testing.T) {
+func TestDesc_MarshalText(t *testing.T) {
 	tests := []struct {
 		name      string
-		tspan     TSpan
+		tspan     Desc
 		wantLines []string
 		wantErr   bool
 	}{
 		{
-			"simple tspan",
-			TS("foo"),
-			[]string{`<tspan x="0" y="0">foo</tspan>`},
+			"simple desc",
+			NewDesc("foo"),
+			[]string{`<desc>foo</desc>`},
 			false,
 		},
 	}

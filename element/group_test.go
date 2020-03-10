@@ -7,42 +7,41 @@ import (
 	"testing"
 )
 
-func TestNewTSpan(t *testing.T) {
+func TestNewGroup(t *testing.T) {
 	type args struct {
-		text     string
 		children []interface{}
 	}
 	tests := []struct {
 		name string
 		args args
-		want TSpan
+		want Group
 	}{
 		{
-			"simple tspan",
-			args{"Foo", nil},
-			TSpan{XMLName: xml.Name{Local: "tspan"}, Text: "Foo"},
+			"simple group",
+			args{},
+			Group{XMLName: xml.Name{Local: "g"}},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewTSpan(tt.args.text, tt.args.children...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewTSpan() = %v, want %v", got, tt.want)
+			if got := NewGroup(tt.args.children...); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewGroup() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestTSpan_MarshalText(t *testing.T) {
+func TestGroup_MarshalText(t *testing.T) {
 	tests := []struct {
 		name      string
-		tspan     TSpan
+		tspan     Group
 		wantLines []string
 		wantErr   bool
 	}{
 		{
-			"simple tspan",
-			TS("foo"),
-			[]string{`<tspan x="0" y="0">foo</tspan>`},
+			"simple group",
+			NewGroup(),
+			[]string{`<g></g>`},
 			false,
 		},
 	}

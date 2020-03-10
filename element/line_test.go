@@ -45,7 +45,7 @@ func TestLine_MarshalText(t *testing.T) {
 		wantErr   bool
 	}{
 		{
-			"one line",
+			"simple line",
 			L(0, 100, 200, 150),
 			[]string{`<line x1="0" y1="100" x2="200" y2="150"></line>`},
 			false,
