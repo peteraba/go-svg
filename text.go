@@ -2,6 +2,7 @@ package svg
 
 import (
 	"encoding/xml"
+	"sync"
 )
 
 // Text represents a Text SVG element
@@ -12,7 +13,9 @@ type Text struct {
 	Y          *Length     `xml:"y,attr,omitempty"`
 	TextAnchor *TextAnchor `xml:"text-anchor,attr,omitempty"`
 	Fill       *Color      `xml:"stroke,attr,omitempty"`
+	Attrs      []xml.Attr  `xml:",attr"`
 	Children   []interface{}
+	l          sync.Mutex
 }
 
 // T constructs new Text element (shortcut)
@@ -74,6 +77,30 @@ func (t Text) SetTextAnchor(ta TextAnchor) Text {
 // UnsetFill removes the previously set text anchor of a Text
 func (t Text) UnsetTextAnchor() Text {
 	t.TextAnchor = nil
+
+	return t
+}
+
+// AddAttr adds a new attribute of a Text
+func (t Text) AddAttr(name, value string) Text {
+	t.l.Lock()
+	t.Attrs = append(t.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
+	t.l.Unlock()
+
+	return t
+}
+
+// RemoveAttr removes all attributes of a given name of a Text
+func (t Text) RemoveAttr(name string) Text {
+	t.l.Lock()
+	var attrs []xml.Attr
+	for _, attr := range t.Attrs {
+		if attr.Name.Local != name {
+			attrs = append(attrs, attr)
+		}
+	}
+	t.Attrs = attrs
+	t.l.Unlock()
 
 	return t
 }

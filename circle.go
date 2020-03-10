@@ -2,22 +2,25 @@ package svg
 
 import (
 	"encoding/xml"
+	"sync"
 )
 
 // Circle represents a Circle SVG element
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle
 type Circle struct {
 	XMLName       xml.Name
-	CX            *Length  `xml:"cx,attr,omitempty"`
-	CY            *Length  `xml:"cy,attr,omitempty"`
-	R             *Length  `xml:"r,attr,omitempty"`
-	Stroke        *Color   `xml:"stroke,attr,omitempty"`
-	StrokeWidth   *uint8   `xml:"stroke-width,attr,omitempty"`
-	StrokeOpacity *Opacity `xml:"stroke-opacity,attr,omitempty"`
-	Fill          *Color   `xml:"fill,attr,omitempty"`
-	FillOpacity   *Opacity `xml:"fill-opacity,attr,omitempty"`
-	Opacity       float64  `xml:"opacity,attr,omitempty"`
+	CX            *Length    `xml:"cx,attr,omitempty"`
+	CY            *Length    `xml:"cy,attr,omitempty"`
+	R             *Length    `xml:"r,attr,omitempty"`
+	Stroke        *Color     `xml:"stroke,attr,omitempty"`
+	StrokeWidth   *uint8     `xml:"stroke-width,attr,omitempty"`
+	StrokeOpacity *Opacity   `xml:"stroke-opacity,attr,omitempty"`
+	Fill          *Color     `xml:"fill,attr,omitempty"`
+	FillOpacity   *Opacity   `xml:"fill-opacity,attr,omitempty"`
+	Opacity       float64    `xml:"opacity,attr,omitempty"`
+	Attrs         []xml.Attr `xml:",attr"`
 	Children      []interface{}
+	l             sync.Mutex
 }
 
 // C constructs new Circle element (shortcut)
@@ -139,6 +142,30 @@ func (c Circle) SetOpacity(o float64) Circle {
 	} else {
 		c.Opacity = o
 	}
+
+	return c
+}
+
+// AddAttr adds a new attribute to a Circle
+func (c Circle) AddAttr(name, value string) Circle {
+	c.l.Lock()
+	c.Attrs = append(c.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
+	c.l.Unlock()
+
+	return c
+}
+
+// RemoveAttr removes all attributes of a given name of a Circle
+func (c Circle) RemoveAttr(name string) Circle {
+	c.l.Lock()
+	attrs := []xml.Attr{}
+	for _, attr := range c.Attrs {
+		if attr.Name.Local != name {
+			attrs = append(attrs, attr)
+		}
+	}
+	c.Attrs = attrs
+	c.l.Unlock()
 
 	return c
 }

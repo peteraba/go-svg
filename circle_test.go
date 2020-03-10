@@ -74,6 +74,12 @@ func TestCircle_MarshalText(t *testing.T) {
 			[]string{`<circle cy="100" r="50"></circle>`},
 			false,
 		},
+		{
+			"complex circle",
+			C(0, 100, 50),
+			[]string{`<circle cy="100" r="50"></circle>`},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -86,6 +92,82 @@ func TestCircle_MarshalText(t *testing.T) {
 			got := string(gotBytes)
 			if !reflect.DeepEqual(got, want) {
 				t.Errorf("xml.Marshal() got = %v, want %v", got, want)
+			}
+		})
+	}
+}
+
+func TestCircle_AddAttr(t *testing.T) {
+	tests := []struct {
+		name string
+		c    Circle
+		want string
+	}{
+		{
+			"single attribute",
+			Circle{}.AddAttr("foo", "Foo"),
+			`<Circle foo="Foo"></Circle>`,
+		},
+		{
+			"multiple attributes",
+			Circle{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<Circle foo="Foo" bar="Bar"></Circle>`,
+		},
+		{
+			"single attribute repeated",
+			Circle{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<Circle foo="Foo" foo="Bar"></Circle>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotBytes, err := xml.Marshal(tt.c)
+			if err != nil {
+				t.Errorf("xml.Marshal() error = %v, wantErr %v", err, false)
+				return
+			}
+
+			got := string(gotBytes)
+			if got != tt.want {
+				t.Errorf("xml.Marshal() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCircle_RemoveAttr(t *testing.T) {
+	tests := []struct {
+		name string
+		c    Circle
+		want string
+	}{
+		{
+			"single attribute",
+			Circle{}.AddAttr("href", "Foo").RemoveAttr("href"),
+			`<Circle></Circle>`,
+		},
+		{
+			"multiple attributes",
+			Circle{}.AddAttr("href", "Foo").AddAttr("bar", "Bar").RemoveAttr("href"),
+			`<Circle bar="Bar"></Circle>`,
+		},
+		{
+			"single attribute repeated",
+			Circle{}.AddAttr("href", "Foo").AddAttr("href", "Bar").RemoveAttr("href"),
+			`<Circle></Circle>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotBytes, err := xml.Marshal(tt.c)
+			if err != nil {
+				t.Errorf("xml.Marshal() error = %v, wantErr %v", err, false)
+				return
+			}
+
+			got := string(gotBytes)
+			if got != tt.want {
+				t.Errorf("xml.Marshal() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

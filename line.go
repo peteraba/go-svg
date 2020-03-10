@@ -2,23 +2,26 @@ package svg
 
 import (
 	"encoding/xml"
+	"sync"
 )
 
 // Line represents a Line SVG element
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/line
 type Line struct {
 	XMLName       xml.Name
-	X1            *Length  `xml:"x1,attr,omitempty"`
-	Y1            *Length  `xml:"y1,attr,omitempty"`
-	X2            *Length  `xml:"x2,attr,omitempty"`
-	Y2            *Length  `xml:"y2,attr,omitempty"`
-	StrokeWidth   *uint8   `xml:"stroke-width,attr,omitempty"`
-	Stroke        *Color   `xml:"stroke,attr,omitempty"`
-	StrokeOpacity *Opacity `xml:"stroke-opacity,attr,omitempty"`
-	Fill          *Color   `xml:"fill,attr,omitempty"`
-	FillOpacity   *Opacity `xml:"fill-opacity,attr,omitempty"`
-	Opacity       float64  `xml:"opacity,attr,omitempty"`
+	X1            *Length    `xml:"x1,attr,omitempty"`
+	Y1            *Length    `xml:"y1,attr,omitempty"`
+	X2            *Length    `xml:"x2,attr,omitempty"`
+	Y2            *Length    `xml:"y2,attr,omitempty"`
+	StrokeWidth   *uint8     `xml:"stroke-width,attr,omitempty"`
+	Stroke        *Color     `xml:"stroke,attr,omitempty"`
+	StrokeOpacity *Opacity   `xml:"stroke-opacity,attr,omitempty"`
+	Fill          *Color     `xml:"fill,attr,omitempty"`
+	FillOpacity   *Opacity   `xml:"fill-opacity,attr,omitempty"`
+	Opacity       float64    `xml:"opacity,attr,omitempty"`
+	Attrs         []xml.Attr `xml:",attr"`
 	Children      []interface{}
+	l             sync.Mutex
 }
 
 // L constructs new Line element (shortcut)
@@ -146,6 +149,30 @@ func (l Line) SetOpacity(o float64) Line {
 	} else {
 		l.Opacity = o
 	}
+
+	return l
+}
+
+// AddAttr adds a new attribute of a Line
+func (l Line) AddAttr(name, value string) Line {
+	l.l.Lock()
+	l.Attrs = append(l.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
+	l.l.Unlock()
+
+	return l
+}
+
+// RemoveAttr removes all attributes of a given name of a Line
+func (l Line) RemoveAttr(name string) Line {
+	l.l.Lock()
+	var attrs []xml.Attr
+	for _, attr := range l.Attrs {
+		if attr.Name.Local != name {
+			attrs = append(attrs, attr)
+		}
+	}
+	l.Attrs = attrs
+	l.l.Unlock()
 
 	return l
 }

@@ -2,25 +2,28 @@ package svg
 
 import (
 	"encoding/xml"
+	"sync"
 )
 
 // Rect represents a Rect SVG element
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/rect
 type Rect struct {
 	XMLName       xml.Name
-	X             *Length  `xml:"x,attr,omitempty"`
-	Y             *Length  `xml:"y,attr,omitempty"`
-	Width         *Length  `xml:"width,attr,omitempty"`
-	Height        *Length  `xml:"height,attr,omitempty"`
-	RX            *Length  `xml:"rx,attr,omitempty"`
-	RY            *Length  `xml:"ry,attr,omitempty"`
-	Stroke        *Color   `xml:"stroke,attr,omitempty"`
-	StrokeWidth   *uint8   `xml:"stroke-width,attr,omitempty"`
-	StrokeOpacity *Opacity `xml:"stroke-opacity,attr,omitempty"`
-	Fill          *Color   `xml:"fill,attr,omitempty"`
-	FillOpacity   *Opacity `xml:"fill-opacity,attr,omitempty"`
-	Opacity       float64  `xml:"opacity,attr,omitempty"`
+	X             *Length    `xml:"x,attr,omitempty"`
+	Y             *Length    `xml:"y,attr,omitempty"`
+	Width         *Length    `xml:"width,attr,omitempty"`
+	Height        *Length    `xml:"height,attr,omitempty"`
+	RX            *Length    `xml:"rx,attr,omitempty"`
+	RY            *Length    `xml:"ry,attr,omitempty"`
+	Stroke        *Color     `xml:"stroke,attr,omitempty"`
+	StrokeWidth   *uint8     `xml:"stroke-width,attr,omitempty"`
+	StrokeOpacity *Opacity   `xml:"stroke-opacity,attr,omitempty"`
+	Fill          *Color     `xml:"fill,attr,omitempty"`
+	FillOpacity   *Opacity   `xml:"fill-opacity,attr,omitempty"`
+	Opacity       float64    `xml:"opacity,attr,omitempty"`
+	Attrs         []xml.Attr `xml:",attr"`
 	Children      []interface{}
+	l             sync.Mutex
 }
 
 // R constructs new Rect element (shortcut)
@@ -152,6 +155,30 @@ func (r Rect) SetOpacity(o float64) Rect {
 	} else {
 		r.Opacity = o
 	}
+
+	return r
+}
+
+// AddAttr adds a new attribute of a Rect
+func (r Rect) AddAttr(name, value string) Rect {
+	r.l.Lock()
+	r.Attrs = append(r.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
+	r.l.Unlock()
+
+	return r
+}
+
+// RemoveAttr removes all attributes of a given name of a Rect
+func (r Rect) RemoveAttr(name string) Rect {
+	r.l.Lock()
+	var attrs []xml.Attr
+	for _, attr := range r.Attrs {
+		if attr.Name.Local != name {
+			attrs = append(attrs, attr)
+		}
+	}
+	r.Attrs = attrs
+	r.l.Unlock()
 
 	return r
 }

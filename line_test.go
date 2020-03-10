@@ -64,3 +64,79 @@ func TestLine_MarshalText(t *testing.T) {
 		})
 	}
 }
+
+func TestLine_AddAttr(t *testing.T) {
+	tests := []struct {
+		name string
+		c    Line
+		want string
+	}{
+		{
+			"single attribute",
+			Line{}.AddAttr("foo", "Foo"),
+			`<Line foo="Foo"></Line>`,
+		},
+		{
+			"multiple attributes",
+			Line{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<Line foo="Foo" bar="Bar"></Line>`,
+		},
+		{
+			"single attribute repeated",
+			Line{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<Line foo="Foo" foo="Bar"></Line>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotBytes, err := xml.Marshal(tt.c)
+			if err != nil {
+				t.Errorf("xml.Marshal() error = %v, wantErr %v", err, false)
+				return
+			}
+
+			got := string(gotBytes)
+			if got != tt.want {
+				t.Errorf("xml.Marshal() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestLine_RemoveAttr(t *testing.T) {
+	tests := []struct {
+		name string
+		c    Line
+		want string
+	}{
+		{
+			"single attribute",
+			Line{}.AddAttr("foo", "Foo").RemoveAttr("foo"),
+			`<Line></Line>`,
+		},
+		{
+			"multiple attributes",
+			Line{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
+			`<Line bar="Bar"></Line>`,
+		},
+		{
+			"single attribute repeated",
+			Line{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
+			`<Line></Line>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotBytes, err := xml.Marshal(tt.c)
+			if err != nil {
+				t.Errorf("xml.Marshal() error = %v, wantErr %v", err, false)
+				return
+			}
+
+			got := string(gotBytes)
+			if got != tt.want {
+				t.Errorf("xml.Marshal() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

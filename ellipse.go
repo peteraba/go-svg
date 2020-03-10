@@ -2,27 +2,30 @@ package svg
 
 import (
 	"encoding/xml"
+	"sync"
 )
 
 // Ellipse represents a Ellipse SVG element
 // See: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/ellipse
 type Ellipse struct {
 	XMLName       xml.Name
-	CX            *Length  `xml:"cx,attr,omitempty"`
-	CY            *Length  `xml:"cy,attr,omitempty"`
-	RX            *Length  `xml:"rx,attr,omitempty"`
-	RY            *Length  `xml:"ry,attr,omitempty"`
-	Stroke        *Color   `xml:"stroke,attr,omitempty"`
-	StrokeWidth   *uint8   `xml:"stroke-width,attr,omitempty"`
-	StrokeOpacity *Opacity `xml:"stroke-opacity,attr,omitempty"`
-	Fill          *Color   `xml:"fill,attr,omitempty"`
-	FillOpacity   *Opacity `xml:"fill-opacity,attr,omitempty"`
-	Opacity       float64  `xml:"opacity,attr,omitempty"`
+	CX            *Length    `xml:"cx,attr,omitempty"`
+	CY            *Length    `xml:"cy,attr,omitempty"`
+	RX            *Length    `xml:"rx,attr,omitempty"`
+	RY            *Length    `xml:"ry,attr,omitempty"`
+	Stroke        *Color     `xml:"stroke,attr,omitempty"`
+	StrokeWidth   *uint8     `xml:"stroke-width,attr,omitempty"`
+	StrokeOpacity *Opacity   `xml:"stroke-opacity,attr,omitempty"`
+	Fill          *Color     `xml:"fill,attr,omitempty"`
+	FillOpacity   *Opacity   `xml:"fill-opacity,attr,omitempty"`
+	Opacity       float64    `xml:"opacity,attr,omitempty"`
+	Attrs         []xml.Attr `xml:",attr"`
 	Children      []interface{}
+	l             sync.Mutex
 }
 
-// E constructs new Ellipse element (shortcut)
-func E(cx, cy, rx, ry float64, children ...interface{}) Ellipse {
+// El constructs new Ellipse element (shortcut)
+func El(cx, cy, rx, ry float64, children ...interface{}) Ellipse {
 	var (
 		pCx, pCy, pRx, pRy *Length
 	)
@@ -68,84 +71,108 @@ func NewEllipse(cx, cy, rx, ry *Length, children ...interface{}) Ellipse {
 }
 
 // SetStrokeWidth sets the stroke width of a Ellipse
-func (e Ellipse) SetStrokeWidth(strokeWidth uint8) Ellipse {
-	e.StrokeWidth = &strokeWidth
+func (el Ellipse) SetStrokeWidth(strokeWidth uint8) Ellipse {
+	el.StrokeWidth = &strokeWidth
 
-	return e
+	return el
 }
 
 // UnsetStrokeWidth removes the previously set stroke width of a Ellipse
-func (e Ellipse) UnsetStrokeWidth() Ellipse {
-	e.StrokeWidth = nil
+func (el Ellipse) UnsetStrokeWidth() Ellipse {
+	el.StrokeWidth = nil
 
-	return e
+	return el
 }
 
 // SetStroke sets the stroke color of a Ellipse
-func (e Ellipse) SetStroke(stroke Color) Ellipse {
-	e.Stroke = &stroke
+func (el Ellipse) SetStroke(stroke Color) Ellipse {
+	el.Stroke = &stroke
 
-	return e
+	return el
 }
 
 // UnsetStroke removes the previously set stroke color of a Ellipse
-func (e Ellipse) UnsetStroke() Ellipse {
-	e.Stroke = nil
+func (el Ellipse) UnsetStroke() Ellipse {
+	el.Stroke = nil
 
-	return e
+	return el
 }
 
 // SetStrokeOpacity sets the stroke opacity of a Ellipse
-func (e Ellipse) SetStrokeOpacity(so Opacity) Ellipse {
-	e.StrokeOpacity = &so
+func (el Ellipse) SetStrokeOpacity(so Opacity) Ellipse {
+	el.StrokeOpacity = &so
 
-	return e
+	return el
 }
 
 // SetStrokeOpacity removes the stroke opacity of a Ellipse
-func (e Ellipse) UnsetStrokeOpacity() Ellipse {
-	e.StrokeOpacity = nil
+func (el Ellipse) UnsetStrokeOpacity() Ellipse {
+	el.StrokeOpacity = nil
 
-	return e
+	return el
 }
 
 // SetStroke sets the fill color of a Ellipse
-func (e Ellipse) SetFill(fill Color) Ellipse {
-	e.Fill = &fill
+func (el Ellipse) SetFill(fill Color) Ellipse {
+	el.Fill = &fill
 
-	return e
+	return el
 }
 
 // UnsetStroke removes the previously set fill color of a Ellipse
-func (e Ellipse) UnsetFill() Ellipse {
-	e.Fill = nil
+func (el Ellipse) UnsetFill() Ellipse {
+	el.Fill = nil
 
-	return e
+	return el
 }
 
 // SetStrokeOpacity sets the fill opacity of a Ellipse
-func (e Ellipse) SetFillOpacity(fo Opacity) Ellipse {
-	e.FillOpacity = &fo
+func (el Ellipse) SetFillOpacity(fo Opacity) Ellipse {
+	el.FillOpacity = &fo
 
-	return e
+	return el
 }
 
 // SetStrokeOpacity removes the stroke opacity of a Ellipse
-func (e Ellipse) UnsetFillOpacity() Ellipse {
-	e.FillOpacity = nil
+func (el Ellipse) UnsetFillOpacity() Ellipse {
+	el.FillOpacity = nil
 
-	return e
+	return el
 }
 
 // SetOpacity sets the opacity of a Ellipse
-func (e Ellipse) SetOpacity(o float64) Ellipse {
+func (el Ellipse) SetOpacity(o float64) Ellipse {
 	if o < 0 {
-		e.Opacity = 0
+		el.Opacity = 0
 	} else if o > 1 {
-		e.Opacity = 1
+		el.Opacity = 1
 	} else {
-		e.Opacity = o
+		el.Opacity = o
 	}
 
-	return e
+	return el
+}
+
+// AddAttr adds a new attribute of a Ellipse
+func (el Ellipse) AddAttr(name, value string) Ellipse {
+	el.l.Lock()
+	el.Attrs = append(el.Attrs, xml.Attr{Name: xml.Name{Local: name}, Value: value})
+	el.l.Unlock()
+
+	return el
+}
+
+// RemoveAttr removes all attributes of a given name of a Ellipse
+func (el Ellipse) RemoveAttr(name string) Ellipse {
+	el.l.Lock()
+	var attrs []xml.Attr
+	for _, attr := range el.Attrs {
+		if attr.Name.Local != name {
+			attrs = append(attrs, attr)
+		}
+	}
+	el.Attrs = attrs
+	el.l.Unlock()
+
+	return el
 }

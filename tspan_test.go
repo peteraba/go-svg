@@ -61,3 +61,79 @@ func TestTSpan_MarshalText(t *testing.T) {
 		})
 	}
 }
+
+func TestTSpan_AddAttr(t *testing.T) {
+	tests := []struct {
+		name string
+		c    TSpan
+		want string
+	}{
+		{
+			"single attribute",
+			TSpan{}.AddAttr("foo", "Foo"),
+			`<TSpan foo="Foo"></TSpan>`,
+		},
+		{
+			"multiple attributes",
+			TSpan{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<TSpan foo="Foo" bar="Bar"></TSpan>`,
+		},
+		{
+			"single attribute repeated",
+			TSpan{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<TSpan foo="Foo" foo="Bar"></TSpan>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotBytes, err := xml.Marshal(tt.c)
+			if err != nil {
+				t.Errorf("xml.Marshal() error = %v, wantErr %v", err, false)
+				return
+			}
+
+			got := string(gotBytes)
+			if got != tt.want {
+				t.Errorf("xml.Marshal() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTSpan_RemoveAttr(t *testing.T) {
+	tests := []struct {
+		name string
+		c    TSpan
+		want string
+	}{
+		{
+			"single attribute",
+			TSpan{}.AddAttr("foo", "Foo").RemoveAttr("foo"),
+			`<TSpan></TSpan>`,
+		},
+		{
+			"multiple attributes",
+			TSpan{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
+			`<TSpan bar="Bar"></TSpan>`,
+		},
+		{
+			"single attribute repeated",
+			TSpan{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
+			`<TSpan></TSpan>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotBytes, err := xml.Marshal(tt.c)
+			if err != nil {
+				t.Errorf("xml.Marshal() error = %v, wantErr %v", err, false)
+				return
+			}
+
+			got := string(gotBytes)
+			if got != tt.want {
+				t.Errorf("xml.Marshal() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

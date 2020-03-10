@@ -90,3 +90,79 @@ func TestSVG_MarshalText(t *testing.T) {
 		})
 	}
 }
+
+func TestSVG_AddAttr(t *testing.T) {
+	tests := []struct {
+		name string
+		c    SVG
+		want string
+	}{
+		{
+			"single attribute",
+			SVG{}.AddAttr("foo", "Foo"),
+			`<SVG foo="Foo"></SVG>`,
+		},
+		{
+			"multiple attributes",
+			SVG{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar"),
+			`<SVG foo="Foo" bar="Bar"></SVG>`,
+		},
+		{
+			"single attribute repeated",
+			SVG{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar"),
+			`<SVG foo="Foo" foo="Bar"></SVG>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotBytes, err := xml.Marshal(tt.c)
+			if err != nil {
+				t.Errorf("xml.Marshal() error = %v, wantErr %v", err, false)
+				return
+			}
+
+			got := string(gotBytes)
+			if got != tt.want {
+				t.Errorf("xml.Marshal() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSVG_RemoveAttr(t *testing.T) {
+	tests := []struct {
+		name string
+		c    SVG
+		want string
+	}{
+		{
+			"single attribute",
+			SVG{}.AddAttr("foo", "Foo").RemoveAttr("foo"),
+			`<SVG></SVG>`,
+		},
+		{
+			"multiple attributes",
+			SVG{}.AddAttr("foo", "Foo").AddAttr("bar", "Bar").RemoveAttr("foo"),
+			`<SVG bar="Bar"></SVG>`,
+		},
+		{
+			"single attribute repeated",
+			SVG{}.AddAttr("foo", "Foo").AddAttr("foo", "Bar").RemoveAttr("foo"),
+			`<SVG></SVG>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotBytes, err := xml.Marshal(tt.c)
+			if err != nil {
+				t.Errorf("xml.Marshal() error = %v, wantErr %v", err, false)
+				return
+			}
+
+			got := string(gotBytes)
+			if got != tt.want {
+				t.Errorf("xml.Marshal() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
